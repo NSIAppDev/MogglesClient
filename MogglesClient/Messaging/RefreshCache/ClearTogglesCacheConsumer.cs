@@ -20,13 +20,6 @@ namespace MogglesClient.Messaging.RefreshCache
             _featureToggleLoggingService = (IMogglesLoggingService)MogglesContainer.Resolve<IMogglesLoggingService>();
             _mogglesConfigurationManager = (IMogglesConfigurationManager)MogglesContainer.Resolve<IMogglesConfigurationManager>();
 
-#if NETFULL
-            if (!InstancesAreCreated())
-            {
-                PublicInterface.MogglesClient.ConfigureAndStartClient();
-            }
-#endif
-
             var msg = context.Message;
 
             if (msg.ApplicationName.ToLowerInvariant() == _mogglesConfigurationManager.GetApplicationName().ToLowerInvariant() &&
@@ -37,11 +30,6 @@ namespace MogglesClient.Messaging.RefreshCache
             }
 
             return Task.FromResult(0);
-        }
-
-        private bool InstancesAreCreated()
-        {
-            return _mogglesConfigurationManager == null || _featureToggleService == null || _featureToggleLoggingService == null;
         }
     }
 }
