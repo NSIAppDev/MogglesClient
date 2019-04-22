@@ -6,13 +6,6 @@ namespace MogglesClient.PublicInterface
     {
         private readonly string _name;
 
-#if NETFULL
-        static MogglesFeatureToggle()
-        {
-            MogglesClient.ConfigureAndStartClient();
-        }
-#endif
-
         public MogglesFeatureToggle()
         {
             _name = GetType().Name;
