@@ -1,4 +1,4 @@
-## MogglesClient
+# MogglesClient
 
 Client code for the [Moggles](https://github.com/NSIAppDev/Moggles) project.  
 Released as a Nuget Package.
