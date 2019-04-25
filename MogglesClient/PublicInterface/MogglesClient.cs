@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace MogglesClient.PublicInterface
 {
-    public class MogglesClient
+    public class Moggles
     {       
         private MogglesToggleService _featureToggleService;
         private IMogglesLoggingService _featureToggleLoggingService;
@@ -20,14 +20,14 @@ namespace MogglesClient.PublicInterface
         private static readonly object Padlock = new object();
 
 #if NETFULL
-        public static MogglesClient ConfigureAndStartClient()
+        public static Moggles ConfigureAndStartClient()
         {
             lock (Padlock)
             {
-                var instance = (MogglesClient)MogglesContainer.Resolve<MogglesClient>();
+                var instance = (Moggles)MogglesContainer.Resolve<Moggles>();
                 if (instance == null)
                 {
-                    instance = new MogglesClient();
+                    instance = new Moggles();
                     MogglesContainer.Register(instance);
                 }
 
@@ -43,14 +43,14 @@ namespace MogglesClient.PublicInterface
 #endif
 
 #if NETCORE
-        public static MogglesClient ConfigureAndStartClient(IConfiguration configuration)
+        public static Moggles ConfigureAndStartClient(IConfiguration configuration)
         {
             lock (Padlock)
             {
-                var instance = (MogglesClient)MogglesContainer.Resolve<MogglesClient>();
+                var instance = (Moggles)MogglesContainer.Resolve<Moggles>();
                 if (instance == null)
                 {
-                    instance = new MogglesClient(configuration);
+                    instance = new Moggles(configuration);
                     MogglesContainer.Register(instance);
                 }
 
@@ -71,7 +71,7 @@ namespace MogglesClient.PublicInterface
         }
 
 #if NETFULL
-        private MogglesClient()
+        private Moggles()
         {
             RegisterComponentsForNetFull();
             Init();
@@ -79,7 +79,7 @@ namespace MogglesClient.PublicInterface
 #endif
 
 #if NETCORE
-        private MogglesClient(IConfiguration configuration)
+        private Moggles(IConfiguration configuration)
         {
             RegisterComponentsForNetCore(configuration);
             Init();
