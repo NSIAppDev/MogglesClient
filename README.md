@@ -150,5 +150,8 @@ The configuration keys for MogglesClient will need to be provided in the applica
 To be added.
 
 ## Credits
-To be added
+To be added.  
+
+## License
+To be added.
     
