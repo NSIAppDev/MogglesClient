@@ -34,7 +34,7 @@ ____________________________________
   
 * **Show deployed feature toggles**
   
-    At application start, the client will search all assemblies for feature toggles and will publish a message containing the feature toggles found in the application. [Moggles](https://github.com/NSIAppDev/Moggles) will read the message and update the deployed status of the feature toggles. The message published can be found [here](https://github.com/NSIAppDev/MogglesClient/blob/PBI54747/MogglesClient/Messaging/EnvironmentDetector/RegisteredTogglesUpdate.cs). 
+    At application start, the client will search all assemblies for feature toggles and will publish a message containing the feature toggles found in the application. [Moggles](https://github.com/NSIAppDev/Moggles) will read the message and update the deployed status of the feature toggles. The published message contract can be found [here](https://github.com/NSIAppDev/MogglesClient/blob/PBI54747/MogglesClient/Messaging/EnvironmentDetector/RegisteredTogglesUpdate.cs). 
     * A list of assemblies that can be ignored in the search can be provided.
   
   More information on how this feature is implemented can be found in the [Moggles documentation](https://github.com/NSIAppDev/Moggles).
