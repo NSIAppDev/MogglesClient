@@ -4,7 +4,7 @@ Client code for the [Moggles](https://github.com/NSIAppDev/Moggles) project.
 Released as a Nuget Package.
 
 
-Retrieves feature toggles from source and caches them in the application at a configurable period of time. The different features the package offers are discussed in the next sections.
+Retrieves feature toggles from source and caches them in the application at a configurable period of time. Available for both .NET Core and .NET Framework.
 
 
 ## Features
@@ -15,6 +15,8 @@ Retrieves feature toggles from source and caches them in the application at a co
 * The feature toggles are saved in the application cache and are refreshed hourly. The period of time in which the feature toggles are refreshed is configurable.
   * Feature toggles are saved in two cache entries, an expiring one and a persistent one. 
   * If the call that retrieves the toggles fails, the persistent cache will hold the previous feature toggles values that are going to be used and the call will be retried every 3 minutes until successful.
+* Check if a feature toggle is enabled.
+* Get all feature toggle values.
 ____________________________________
   :heavy_exclamation_mark: *In order to make use of the following features a [Rabbitmq](https://www.rabbitmq.com/configure.html) machine will need to be setup.*
   
@@ -26,13 +28,13 @@ ____________________________________
 
   * If the impact of a toggle needs to be immediate, a force cache event can be handled by the client.  
   * The queue name for this event will need to be provided.  
-  * The consumer implemented in the MogglesClient will read the message from the queue and based on the **Application** and **Environment** it will refresh the corresponding application.  
+  * The consumer implemented in the MogglesClient will read the message from the queue and based on the **Application** and **Environment** it will refresh the corresponding application. The expected message contract can be found [here](https://github.com/NSIAppDev/MogglesClient/blob/PBI54747/MogglesClient/Messaging/RefreshCache/RefreshTogglesCache.cs).
   
   More information on how this feature is implemented can be found in the [Moggles documentation](https://github.com/NSIAppDev/Moggles).
   
 * **Show deployed feature toggles**
   
-    At application start, the client will search all assemblies for feature toggles and will publish a message containing the feature toggles found in the application. [Moggles](https://github.com/NSIAppDev/Moggles) will read the message and update the deployed status of the feature toggles.  
+    At application start, the client will search all assemblies for feature toggles and will publish a message containing the feature toggles found in the application. [Moggles](https://github.com/NSIAppDev/Moggles) will read the message and update the deployed status of the feature toggles. The message published can be found [here](https://github.com/NSIAppDev/MogglesClient/blob/PBI54747/MogglesClient/Messaging/EnvironmentDetector/RegisteredTogglesUpdate.cs). 
     * A list of assemblies that can be ignored in the search can be provided.
   
   More information on how this feature is implemented can be found in the [Moggles documentation](https://github.com/NSIAppDev/Moggles).
@@ -49,7 +51,8 @@ _______________________________________
     When the FTs are not available (both cache entries are empty) | When a force cache refresh event was handled 
     When detecting the deployed feature toggles and one of the assemblies it searches in could not be loaded | 
     
-## Installation
+## Installation  
+The package can be downloaded from [NuGet](https://www.nuget.org/packages/MogglesClient/).
 
 ## How to use?
 
@@ -103,4 +106,49 @@ The configuration keys for MogglesClient will need to be provided in the applica
   } 
 ```
 
-* At application start ``` ConfigureAndStartClient()``` method has to be called. The method will initialize the client, will cache the feature toggles and it will publish the message with the deployed feature toggles.
+* At application start ```Moggles.ConfigureAndStartClient()``` method has to be called. The method will initialize the client, will cache the feature toggles and it will publish the message with the deployed feature toggles.  
+  * The method will also return the configured client instance which can be registered and injected in the code. The registration step is only necessary if the GetAllFeatureToggles method is used:  
+  
+    ```C#
+    Moggles mogglesClient = Moggles.ConfigureAndStartClient();
+    builder.RegisterInstance(mogglesClient);
+    ```  
+
+    In controller:  
+
+    ```C#
+    public FeatureToggleController(Moggles mogglesClient)
+    {
+       _mogglesClient = mogglesClient;
+    }
+
+    ...
+
+    _mogglesClient.GetAllToggles();
+    ```
+
+* Adding and using a feature toggle  
+
+    Each feature toggle needs to have a corresponding class that inherits from ```MogglesFeatureToggle``` (The feature toggle class name has to be the same as the feature toggle name returned from source):  
+    
+    ```C#
+    using MogglesClient.PublicInterface;
+
+    namespace TestApp.FeatureToggles
+    {
+        public class TestFeatureToggle: MogglesFeatureToggle
+        {
+
+        }
+    }
+    ```
+   Usage:  
+    ```C#
+    Is<TestFeatureToggle>.Enabled;
+    ```
+## Testing  
+To be added.
+
+## Credits
+To be added
+    
