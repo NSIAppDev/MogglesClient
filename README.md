@@ -213,5 +213,5 @@ In order to mock the feature toggles values ```Moggles.ConfigureForTestingMode()
 The initial insipiration was the [feature toggle library](https://github.com/jason-roberts/FeatureToggle) created by Jason Roberts.  
 
 ## License
-The project is licensed under the [GNU Affero General Public License v3.0](https://github.com/NSIAppDev/MogglesClient/blob/master/LICENSE) 
+The project is licensed under the [GNU Affero General Public License v3.0](./LICENSE) 
     
