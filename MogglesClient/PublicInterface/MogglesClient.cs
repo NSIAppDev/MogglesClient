@@ -37,7 +37,7 @@ namespace MogglesClient.PublicInterface
 
         public static void ConfigureForTestingMode()
         {
-            var mogglesConfigurationManager = new NetFullMogglesConfigurationManager();
+            IMogglesConfigurationManager mogglesConfigurationManager = new NetFullMogglesConfigurationManager();
             MogglesContainer.Register(mogglesConfigurationManager);
         }
 #endif
@@ -60,7 +60,7 @@ namespace MogglesClient.PublicInterface
 
         public static void ConfigureForTestingMode(IConfiguration configuration)
         {
-            var mogglesConfigurationManager = new NetCoreMogglesConfigurationManager(configuration);
+            IMogglesConfigurationManager mogglesConfigurationManager = new NetCoreMogglesConfigurationManager(configuration);
             MogglesContainer.Register(mogglesConfigurationManager);
         }
 #endif
