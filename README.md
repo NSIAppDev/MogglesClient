@@ -4,8 +4,18 @@ Client code for the [Moggles](https://github.com/NSIAppDev/Moggles) project.
 Released as a Nuget Package.
 
 
-Retrieves feature toggles from source and caches them in the application at a configurable period of time. Available for both .NET Core and .NET Framework.
+Retrieves feature toggles from source and caches them in the application at a configurable period of time. Available for both .NET Core and .NET Framework.  
 
+1. [Installation](#installation)
+2. [Features](#features)
+3. [How to use?](#how-to-use)
+4. [Logging](#logging)
+5. [Testing](#testing)
+6. [Credits](#credits)
+7. [License](#license)
+
+## Installation  
+The package can be downloaded from [NuGet](https://www.nuget.org/packages/MogglesClient/).
 
 ## Features
 
@@ -20,7 +30,7 @@ Retrieves feature toggles from source and caches them in the application at a co
 ____________________________________
   :heavy_exclamation_mark: *In order to make use of the following features a [Rabbitmq](https://www.rabbitmq.com/configure.html) machine will need to be setup.*
   
-  The following features are enabled by default, but they can be disabled by adding a key in the application configuration file.
+  The following features are enabled by default, but they can be disabled by adding a key in the application configuration file (*UseMessaging*).
   
   The **message bus url**, **user** and **password** will need to be provided.
   
@@ -28,31 +38,27 @@ ____________________________________
 
   * If the impact of a toggle needs to be immediate, a force cache event can be handled by the client.  
   * The queue name for this event will need to be provided.  
-  * The consumer implemented in the MogglesClient will read the message from the queue and based on the **Application** and **Environment** it will refresh the corresponding application. The expected message contract can be found [here](https://github.com/NSIAppDev/MogglesClient/blob/PBI54747/MogglesClient/Messaging/RefreshCache/RefreshTogglesCache.cs).
+  * The consumer implemented in the MogglesClient will read the message from the queue and based on the **Application** and **Environment** it will refresh the corresponding application. The expected message contract can be found [here](./MogglesClient/Messaging/RefreshCache/RefreshTogglesCache.cs).
   
   More information on how this feature is implemented can be found in the [Moggles documentation](https://github.com/NSIAppDev/Moggles).
   
 * **Show deployed feature toggles**
   
-    At application start, the client will search all assemblies for feature toggles and will publish a message containing the feature toggles found in the application. [Moggles](https://github.com/NSIAppDev/Moggles) will read the message and update the deployed status of the feature toggles. The published message contract can be found [here](https://github.com/NSIAppDev/MogglesClient/blob/PBI54747/MogglesClient/Messaging/EnvironmentDetector/RegisteredTogglesUpdate.cs). 
+    At application start, the client will search all assemblies for feature toggles and will publish a message containing the feature toggles found in the application. [Moggles](https://github.com/NSIAppDev/Moggles) will read the message and update the deployed status of the feature toggles. The published message contract can be found [here](./MogglesClient/Messaging/EnvironmentDetector/RegisteredTogglesUpdate.cs). 
     * A list of assemblies that can be ignored in the search can be provided.
   
   More information on how this feature is implemented can be found in the [Moggles documentation](https://github.com/NSIAppDev/Moggles).
-_______________________________________
 
-* **Logging**  
+## Logging
 
-  Different information is logged in [Application Insights](https://docs.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview):  
+Different information is logged in [Application Insights](https://docs.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview):  
   * An instrumentation key will need to be provided in order for this feature to be available.
 
-    Exceptions | Events
+    Exceptions logged| Events logged
     --- | --- 
     The API call fails | When the cache entries are successfully refreshed 
     When the FTs are not available (both cache entries are empty) | When a force cache refresh event was handled 
     When detecting the deployed feature toggles and one of the assemblies it searches in could not be loaded | 
-    
-## Installation  
-The package can be downloaded from [NuGet](https://www.nuget.org/packages/MogglesClient/).
 
 ## How to use?
 
@@ -108,11 +114,18 @@ The configuration keys for MogglesClient will need to be provided in the applica
 
 * At application start ```Moggles.ConfigureAndStartClient()``` method has to be called. The method will initialize the client, will cache the feature toggles and it will publish the message with the deployed feature toggles.  
   * The method will also return the configured client instance which can be registered and injected in the code. The registration step is only necessary if the GetAllFeatureToggles method is used:  
+    * **.NET Framework**
   
-    ```C#
-    Moggles mogglesClient = Moggles.ConfigureAndStartClient();
-    builder.RegisterInstance(mogglesClient);
-    ```  
+      ```C#
+      Moggles mogglesClient = Moggles.ConfigureAndStartClient();
+      builder.RegisterInstance(mogglesClient);
+      ```  
+    * **.NET Core**  
+      The **IConfiguration** object will have to be passed to the method.
+      ```C#
+      Moggles mogglesClient = Moggles.ConfigureAndStartClient(Configuration);
+      services.TryAddSingleton(mogglesClient);
+      ```  
 
     In controller:  
 
@@ -147,11 +160,58 @@ The configuration keys for MogglesClient will need to be provided in the applica
     Is<TestFeatureToggle>.Enabled;
     ```
 ## Testing  
-To be added.
 
-## Credits
-To be added.  
+In order to mock the feature toggles values ```Moggles.ConfigureForTestingMode()``` will have to be called before each test and a key will need to be added in the tests configuration file (*TestingMode*) together with the feature toggle value.
+
+* NET. Framework  
+  ```C#
+  Moggles.ConfigureForTestingMode();
+  ```
+  
+  In configuration file:  
+  ```C#
+    <add key="Moggles.TestingMode" value="true" />
+    <add key="Moggles.TestFeatureToggle" value="true" />
+  ```  
+  (having the same value in all tests)  
+   
+  or
+   
+  ```C#
+  ConfigurationManager.AppSettings["Moggles.TestingMode"] = "true";
+  ConfigurationManager.AppSettings["Moggles.TestFeatureToggle"] = "true";
+  ```  
+  (having the possibility to mock the values independently in each test)
+
+* NET. Core  
+  ```C#
+   var configuration = new ConfigurationBuilder()
+       .AddJsonFile("testConfig.json")
+       .Build();  
+   Moggles.ConfigureForTestingMode(configuration);
+   ```
+ 
+   In configuration file:  
+   ```C#
+   "Moggles": {
+     "TestingMode": "true",
+     "TestFeatureToggle":  "true" 
+   } 
+   ```
+   (having the same value in all tests)  
+   
+   or 
+   
+   ```C#
+   configuration["Moggles:TestingMode"] = "true";
+   configuration["Moggles:TestFeatureToggle"] = "true";
+   ```
+   
+   (having the possibility to mock the values independently in each test)
+
+## Credits  
+The initial insipiration was the [feature toggle library](https://github.com/jason-roberts/FeatureToggle) created by Jason Roberts.  
 
 ## License
-To be added.
+The project is licensed under the [GNU Affero General Public License v3.0](https://github.com/NSIAppDev/MogglesClient/blob/master/LICENSE) 
     
