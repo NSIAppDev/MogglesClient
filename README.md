@@ -163,7 +163,7 @@ The configuration keys for MogglesClient will need to be provided in the applica
 
 In order to mock the feature toggles values ```Moggles.ConfigureForTestingMode()``` will have to be called before each test and a key will need to be added in the tests configuration file (*TestingMode*) together with the feature toggle value.
 
-* NET. Framework  
+* **NET. Framework**  
   ```C#
   Moggles.ConfigureForTestingMode();
   ```
@@ -183,7 +183,7 @@ In order to mock the feature toggles values ```Moggles.ConfigureForTestingMode()
   ```  
   (having the possibility to mock the values independently in each test)
 
-* NET. Core  
+* **NET. Core**  
   ```C#
    var configuration = new ConfigurationBuilder()
        .AddJsonFile("testConfig.json")
