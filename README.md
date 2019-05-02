@@ -8,8 +8,8 @@ Retrieves feature toggles from source and caches them in the application at a co
 
 1. [Installation](#installation)
 2. [Features](#features)
-3. [How to use?](#how-to-use)
-4. [Logging](#logging)
+3. [Logging](#logging)
+4. [How to use?](#how-to-use)
 5. [Testing](#testing)
 6. [Credits](#credits)
 7. [License](#license)
