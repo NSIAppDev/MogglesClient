@@ -25,6 +25,7 @@ The package can be downloaded from [NuGet](https://www.nuget.org/packages/Moggle
 * The feature toggles are saved in the application cache and are refreshed hourly. The period of time in which the feature toggles are refreshed is configurable.
   * Feature toggles are saved in two cache entries, an expiring one and a persistent one. 
   * If the call that retrieves the toggles fails, the persistent cache will hold the previous feature toggles values that are going to be used and the call will be retried every 3 minutes until successful.
+  * If none of the cache entries are available, the default toggle value is **false** and an exception is logged in [Application Insights](#logging).
 * Check if a feature toggle is enabled.
 * Get all feature toggle values.
 ____________________________________
@@ -36,9 +37,10 @@ ____________________________________
   
   #### **Force cache refresh** 
 
-  * If the impact of a toggle needs to be immediate, a force cache event can be handled by the client.    
+  * If the impact of a toggle needs to be visible prior to the new refresh time of the cache, a force cache event can be handled by the client.   
   * The consumer implemented in the MogglesClient will read the message from the queue and based on the **Application** and **Environment** it will refresh the corresponding application. The expected message contract can be found [here](./MogglesClient/Messaging/RefreshCache/RefreshTogglesCache.cs) (*the namespace of the contract class will also have to match*).
-   * The queue name for this event will need to be provided.
+  * The cache will be refreshed as soon as the message is published and read from the queue.
+  * The queue name for this event will need to be provided.
   
   More information on how this feature is implemented can be found in the [Moggles documentation](https://github.com/NSIAppDev/Moggles#force-cache-refresh).
   
@@ -72,19 +74,19 @@ The configuration keys for MogglesClient will need to be provided in the applica
     <!--REQUIRED KEYS-->
     <add key="Moggles.ApplicationName" value="MogglesExampleApp" />
     <add key="Moggles.Environment" value="DEV" />
-    <add key="Moggles.Url" value="http://featureToggleSource.com/getFeatureToggles" />
+    <add key="Moggles.Url" value="http://myFeatureToggleSource.com/getFeatureToggles" />
 
     <!--OPTIONAL KEYS-->
     <add key="Moggles.CachingTime" value="3600"/>
     <add key="Moggles.RequestTimeout" value="30"/>
-    <add key="Moggles.ApplicationInsightsInstrumentationKey" value="instrumentationKey"/>
+    <add key="Moggles.ApplicationInsightsInstrumentationKey" value="myInstrumentationKey"/>
 
     <!--Messaging features-->
     <add key="Moggles.UseMessaging" value = "true" />
-    <add key="Moggles.MessageBusUrl" value="rabbitmq://messageBusUrl" />
+    <add key="Moggles.MessageBusUrl" value="rabbitmq://myMessageBusUrl" />
     <add key="Moggles.MessageBusUser" value="user" />
     <add key="Moggles.MessageBusPassword" value="password" />
-    <add key="Moggles.CacheRefreshQueue" value="cache_refresh_queue"/>
+    <add key="Moggles.CacheRefreshQueue" value="my_cache_refresh_queue"/>
     <add key="Moggles.EnvironmentDetectorCustomAssembliesToIgnore" value="Assembly1, Assembly2"/>
   </appSettings>
 ```
@@ -95,19 +97,19 @@ The configuration keys for MogglesClient will need to be provided in the applica
     //REQUIRED KEYS
     "ApplicationName": "MogglesExampleApp",
     "Environment": "DEV",
-    "Url": "http://featureToggleSource.com/getFeatureToggles",
+    "Url": "http://myFeatureToggleSource.com/getFeatureToggles",
 
     //OPTIONAL KEYS
     "CachingTime": "3600",
     "RequestTimeout":  "30", 
-    "ApplicationInsightsInstrumentationKey": "instrumentationKey",
+    "ApplicationInsightsInstrumentationKey": "myInstrumentationKey",
 
     //Messaging features
     "UseMessaging": "true",
-    "MessageBusUrl": "rabbitmq://messageBusUrl",
+    "MessageBusUrl": "rabbitmq://myMessageBusUrl",
     "MessageBusUser": "user",
     "MessageBusPassword": "password",
-    "CacheRefreshQueue": "cache_refresh_queue",
+    "CacheRefreshQueue": "my_cache_refresh_queue",
     "EnvironmentDetectorCustomAssembliesToIgnore": "Assembly1, Assembly2"
   } 
 ```
