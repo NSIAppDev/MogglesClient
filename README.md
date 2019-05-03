@@ -34,20 +34,20 @@ ____________________________________
   
   The **message bus url**, **user** and **password** will need to be provided.
   
-* **Force cache refresh** 
+  #### **Force cache refresh** 
 
   * If the impact of a toggle needs to be immediate, a force cache event can be handled by the client.  
   * The queue name for this event will need to be provided.  
   * The consumer implemented in the MogglesClient will read the message from the queue and based on the **Application** and **Environment** it will refresh the corresponding application. The expected message contract can be found [here](./MogglesClient/Messaging/RefreshCache/RefreshTogglesCache.cs).
   
-  More information on how this feature is implemented can be found in the [Moggles documentation](https://github.com/NSIAppDev/Moggles).
+  More information on how this feature is implemented can be found in the [Moggles documentation](https://github.com/NSIAppDev/Moggles#force-cache-refresh).
   
-* **Show deployed feature toggles**
+  #### **Show deployed feature toggles**
   
-    At application start, the client will search all assemblies for feature toggles and will publish a message containing the feature toggles found in the application. [Moggles](https://github.com/NSIAppDev/Moggles) will read the message and update the deployed status of the feature toggles. The published message contract can be found [here](./MogglesClient/Messaging/EnvironmentDetector/RegisteredTogglesUpdate.cs). 
-    * A list of assemblies that can be ignored in the search can be provided.
+   * At application start, the client will search all assemblies for feature toggles and will publish a message containing the feature toggles found in the application. [Moggles](https://github.com/NSIAppDev/Moggles) will read the message and update the deployed status of the feature toggles. The published message contract can be found [here](./MogglesClient/Messaging/EnvironmentDetector/RegisteredTogglesUpdate.cs). 
+   * A list of assemblies that can be ignored in the search can be provided.
   
-  More information on how this feature is implemented can be found in the [Moggles documentation](https://github.com/NSIAppDev/Moggles).
+  More information on how this feature is implemented can be found in the [Moggles documentation](https://github.com/NSIAppDev/Moggles/#show-deployed-feature-toggles).
 
 ## Logging
 
