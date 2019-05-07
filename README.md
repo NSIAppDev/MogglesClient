@@ -119,16 +119,25 @@ The configuration keys for MogglesClient will need to be provided in the applica
   * The method will also return the configured client instance which can be registered and injected in the code. The registration step is only necessary if the GetAllFeatureToggles method is used:  
     * **.NET Framework**  
     
+        Global.asax  
       ```C#
-      Moggles mogglesClient = Moggles.ConfigureAndStartClient();
-      DependencyInjectionContainer.RegisterInstance(mogglesClient);
+      public void Application_Start()
+      {
+        Moggles mogglesClient = Moggles.ConfigureAndStartClient();
+        DependencyInjectionContainer.RegisterInstance(mogglesClient);
+      }
       ```  
     * **.NET Core**  
     
-      The **IConfiguration** object will have to be passed to the method.
+      The **IConfiguration** object will have to be passed to the method.  
+      
+      Startup.cs  
       ```C#
-      Moggles mogglesClient = Moggles.ConfigureAndStartClient(Configuration);
-      services.TryAddSingleton(mogglesClient);
+      public void ConfigureServices(IServiceCollection services)
+      {
+        Moggles mogglesClient = Moggles.ConfigureAndStartClient(Configuration);
+        services.TryAddSingleton(mogglesClient);
+      }
       ```  
 
     In controller:  
@@ -146,7 +155,7 @@ The configuration keys for MogglesClient will need to be provided in the applica
 
 * #### Adding and using a feature toggle  
 
-    Each feature toggle needs to have a corresponding class that inherits from ```MogglesFeatureToggle``` (The feature toggle class name has to be the same as the feature toggle name returned from source ([Moggles](https://github.com/NSIAppDev/Moggles) or other application respecting the [contract](./PublicInterface/FeatureToggle.cs)):  
+    Each feature toggle needs to have a corresponding class that inherits from ```MogglesFeatureToggle```. The feature toggle class name has to be the same as the feature toggle name returned from source ([Moggles](https://github.com/NSIAppDev/Moggles) or other application respecting the [contract](./PublicInterface/FeatureToggle.cs)):  
     
     ```C#
     using MogglesClient.PublicInterface;
