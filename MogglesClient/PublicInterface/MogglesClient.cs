@@ -20,14 +20,14 @@ namespace MogglesClient.PublicInterface
         private static readonly object Padlock = new object();
 
 #if NETFULL
-        public static Moggles ConfigureAndStartClient()
+        public static Moggles ConfigureAndStartClient(IMogglesConfigurationManager configurationManager = null)
         {
             lock (Padlock)
             {
                 var instance = (Moggles)MogglesContainer.Resolve<Moggles>();
                 if (instance == null)
                 {
-                    instance = new Moggles();
+                    instance = new Moggles(configurationManager);
                     MogglesContainer.Register(instance);
                 }
 
@@ -35,9 +35,9 @@ namespace MogglesClient.PublicInterface
             }
         }
 
-        public static void ConfigureForTestingMode()
+        public static void ConfigureForTestingMode(IMogglesConfigurationManager configurationManager = null)
         {
-            IMogglesConfigurationManager mogglesConfigurationManager = new NetFullMogglesConfigurationManager();
+            IMogglesConfigurationManager mogglesConfigurationManager = configurationManager ?? new NetFullMogglesConfigurationManager();
             MogglesContainer.Register(mogglesConfigurationManager);
         }
 #endif
@@ -71,9 +71,9 @@ namespace MogglesClient.PublicInterface
         }
 
 #if NETFULL
-        private Moggles()
+        private Moggles(IMogglesConfigurationManager configurationManager)
         {
-            RegisterComponentsForNetFull();
+            RegisterComponentsForNetFull(configurationManager);
             Init();
         }
 #endif
@@ -111,9 +111,9 @@ namespace MogglesClient.PublicInterface
         }
 
 #if NETFULL
-        private void RegisterComponentsForNetFull()
+        private void RegisterComponentsForNetFull(IMogglesConfigurationManager configurationManager)
         {
-            _mogglesConfigurationManager = new NetFullMogglesConfigurationManager();
+            _mogglesConfigurationManager = configurationManager ?? new NetFullMogglesConfigurationManager();
             MogglesContainer.Register(_mogglesConfigurationManager);
 
             ConfigureCommonComponents();
