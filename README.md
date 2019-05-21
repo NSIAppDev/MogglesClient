@@ -19,7 +19,7 @@ The package can be downloaded from [NuGet](https://www.nuget.org/packages/Moggle
 
 ## Features
 
-* The feature toggles are retrieved using an API provided in the [configuration file](#how-to-use) by each application the package is installed in. Even though it was originally created for [Moggles](https://github.com/NSIAppDev/Moggles), the API can be replaced by any application respecting the [contract](./PublicInterface/FeatureToggle.cs).
+* The feature toggles are retrieved using an API provided in the [configuration file](#how-to-use) by each application the package is installed in. Even though it was originally created for [Moggles](https://github.com/NSIAppDev/Moggles), the API can be replaced by any application respecting the [contract](./MogglesClient/PublicInterface/FeatureToggle.cs).
   * A timeout period for the call can be configured, the default value is 30s.
 * The feature toggles are retrieved based on the **Application** and **Environment**.
 * The feature toggles are saved in the application cache and are **refreshed hourly**. The period of time in which the feature toggles are refreshed is configurable by adding a key in the [application configuration file](#how-to-use).
@@ -28,7 +28,7 @@ The package can be downloaded from [NuGet](https://www.nuget.org/packages/Moggle
   * If none of the cache entries are available, the default toggle value is **false** and an exception is logged in [Application Insights](#logging).
 * [Check if a feature toggle is enabled](#adding-and-using-a-feature-toggle).
 * Get all feature toggle values.
-  * This feature will return a list with all the feature toggles and their values from the application cache. The class returned can be found [here](./PublicInterface/FeatureToggle.cs).
+  * This feature will return a list with all the feature toggles and their values from the application cache. The class returned can be found [here](./MogglesClient/PublicInterface/FeatureToggle.cs).
 ____________________________________
   :heavy_exclamation_mark: *In order to make use of the following features a [Rabbitmq](https://www.rabbitmq.com/configure.html) machine will need to be setup.*
   
