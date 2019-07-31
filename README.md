@@ -98,7 +98,7 @@ The configuration keys for MogglesClient will need to be provided in the applica
     //REQUIRED KEYS
     "ApplicationName": "MogglesExampleApp",
     "Environment": "DEV",
-    "Url": "http://myFeatureToggleSource.com/getFeatureToggles",
+    "Url": "http://myFeatureToggleSource.com/api/FeatureToggles/getApplicationFeatureToggles",
 
     //OPTIONAL KEYS
     "CachingTime": "3600",
