@@ -75,7 +75,7 @@ The configuration keys for MogglesClient will need to be provided in the applica
     <!--REQUIRED KEYS-->
     <add key="Moggles.ApplicationName" value="MogglesExampleApp" />
     <add key="Moggles.Environment" value="DEV" />
-    <add key="Moggles.Url" value="http://myFeatureToggleSource.com/getFeatureToggles" />
+    <add key="Moggles.Url" value="http://myFeatureToggleSource.com/api/FeatureToggles/getApplicationFeatureToggles" />
 
     <!--OPTIONAL KEYS-->
     <add key="Moggles.CachingTime" value="3600"/>
@@ -121,6 +121,9 @@ The configuration keys for MogglesClient will need to be provided in the applica
     
         Global.asax  
       ```C#
+      using Autofac;  
+      using MogglesClient.PublicInterface;  
+      
       public void Application_Start()
       {
         Moggles mogglesClient = Moggles.ConfigureAndStartClient();
@@ -133,6 +136,9 @@ The configuration keys for MogglesClient will need to be provided in the applica
       
       Startup.cs  
       ```C#
+      using Microsoft.Extensions.DependencyInjection.Extensions;  
+      using MogglesClient.PublicInterface;  
+      
       public void ConfigureServices(IServiceCollection services)
       {
         Moggles mogglesClient = Moggles.ConfigureAndStartClient(Configuration);
@@ -143,6 +149,8 @@ The configuration keys for MogglesClient will need to be provided in the applica
     In controller:  
 
     ```C#
+    using MogglesClient.PublicInterface;  
+    
     public FeatureToggleController(Moggles mogglesClient)
     {
        _mogglesClient = mogglesClient;
