@@ -28,7 +28,7 @@ The package can be downloaded from [NuGet](https://www.nuget.org/packages/Moggle
   * If none of the cache entries are available, the default toggle value is **false** and an exception is logged in [Application Insights](#logging).
 * [Check if a feature toggle is enabled](#adding-and-using-a-feature-toggle).
 * Get all feature toggle values.
-  * This feature will return a list with all the feature toggles and their values from the application cache. The class returned can be found [here](./MogglesClient/PublicInterface/FeatureToggle.cs).
+  * This feature will return a list with all the feature toggles and their values from the application cache. The class returned can be found [here](./MogglesClient/PublicInterface/FeatureToggle.cs). The client instance can be [registered in the dependency injection container](#how-to-use) in order for this feature to be used.
 ____________________________________
   :heavy_exclamation_mark: *In order to make use of the following features a [Rabbitmq](https://www.rabbitmq.com/configure.html) machine will need to be setup.*
   
