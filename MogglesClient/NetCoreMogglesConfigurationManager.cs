@@ -16,59 +16,59 @@ namespace MogglesClient
 
         public string GetApplicationName()
         {
-            return Configuration.GetSection(ConfigurationKeys.RootSection)[ConfigurationKeys.ApplicationName] ?? throw new MogglesClientException("There is no \"Application\" value defined in the configuration file");
+            return Configuration.GetSection(MogglesConfigurationKeys.RootSection)[MogglesConfigurationKeys.ApplicationName] ?? throw new MogglesClientException("There is no \"Application\" value defined in the configuration file");
         }
 
         public string GetEnvironment()
         {
-            return Configuration.GetSection(ConfigurationKeys.RootSection)[ConfigurationKeys.Environment] ?? throw new MogglesClientException("There is no \"Environment\" value defined in the configuration file");
+            return Configuration.GetSection(MogglesConfigurationKeys.RootSection)[MogglesConfigurationKeys.Environment] ?? throw new MogglesClientException("There is no \"Environment\" value defined in the configuration file");
         }
 
         public string GetMessageBusUrl()
         {
-            return Configuration.GetSection(ConfigurationKeys.RootSection)[ConfigurationKeys.MessageBusUrl];
+            return Configuration.GetSection(MogglesConfigurationKeys.RootSection)[MogglesConfigurationKeys.MessageBusUrl];
         }
 
         public string GetMessageBusUser()
         {
-            return Configuration.GetSection(ConfigurationKeys.RootSection)[ConfigurationKeys.MessageBusUser];
+            return Configuration.GetSection(MogglesConfigurationKeys.RootSection)[MogglesConfigurationKeys.MessageBusUser];
         }
 
         public string GetMessageBusPassword()
         {
-            return Configuration.GetSection(ConfigurationKeys.RootSection)[ConfigurationKeys.MessageBusPassword];
+            return Configuration.GetSection(MogglesConfigurationKeys.RootSection)[MogglesConfigurationKeys.MessageBusPassword];
         }
 
         public string GetTogglesUrl()
         {
-            return Configuration.GetSection(ConfigurationKeys.RootSection)[ConfigurationKeys.Url] ?? throw new MogglesClientException("There is no \"Url\" value defined in the configuration file");
+            return Configuration.GetSection(MogglesConfigurationKeys.RootSection)[MogglesConfigurationKeys.Url] ?? throw new MogglesClientException("There is no \"Url\" value defined in the configuration file");
         }
 
         public TimeSpan GetTimeoutValue()
         {
             var timeoutString =
-                Configuration.GetSection(ConfigurationKeys.RootSection)[ConfigurationKeys.RequestTimeout] ?? ConfigurationKeys.DefaultTimeoutValue;
+                Configuration.GetSection(MogglesConfigurationKeys.RootSection)[MogglesConfigurationKeys.RequestTimeout] ?? MogglesConfigurationKeys.DefaultTimeoutValue;
             return TimeSpan.FromSeconds(int.Parse(timeoutString));
         }
 
         public DateTimeOffset GetCachingTime()
         {
-            var cachingTime = Configuration.GetSection(ConfigurationKeys.RootSection)[ConfigurationKeys.CachingTime];
+            var cachingTime = Configuration.GetSection(MogglesConfigurationKeys.RootSection)[MogglesConfigurationKeys.CachingTime];
 
             return cachingTime != null
                 ? DateTimeOffset.UtcNow.AddSeconds(Int32.Parse(cachingTime))
-                : DateTimeOffset.UtcNow.AddSeconds(ConfigurationKeys.DefaultCachingTime);
+                : DateTimeOffset.UtcNow.AddSeconds(MogglesConfigurationKeys.DefaultCachingTime);
         }
 
         public DateTimeOffset GetOnErrorCachingTime()
         {
-            return DateTimeOffset.UtcNow.AddSeconds(ConfigurationKeys.OnErrorCachingTime);
+            return DateTimeOffset.UtcNow.AddSeconds(MogglesConfigurationKeys.OnErrorCachingTime);
         }
 
         public bool IsApplicationInTestingMode()
         {
             var isApplicationInTestingMode =
-                Configuration.GetSection(ConfigurationKeys.RootSection)[ConfigurationKeys.TestingMode];
+                Configuration.GetSection(MogglesConfigurationKeys.RootSection)[MogglesConfigurationKeys.TestingMode];
 
             return isApplicationInTestingMode != null && Convert.ToBoolean(isApplicationInTestingMode);
         }
@@ -76,28 +76,28 @@ namespace MogglesClient
         public bool GetFeatureToggleValueFromConfig(string name)
         {
             return Convert.ToBoolean(
-                Configuration.GetSection(ConfigurationKeys.RootSection)[name]);
+                Configuration.GetSection(MogglesConfigurationKeys.RootSection)[name]);
         }
 
         public bool IsMessagingEnabled()
         {
-            var useMessaging = Configuration.GetSection(ConfigurationKeys.RootSection)[ConfigurationKeys.UseMessaging] ?? ConfigurationKeys.UseMessagingDefault;
+            var useMessaging = Configuration.GetSection(MogglesConfigurationKeys.RootSection)[MogglesConfigurationKeys.UseMessaging] ?? MogglesConfigurationKeys.UseMessagingDefault;
             return Convert.ToBoolean(useMessaging);
         }
         public string[] GetCustomAssemblies()
         {
-            var customAssembliesString = Configuration.GetSection(ConfigurationKeys.RootSection)[ConfigurationKeys.CustomAssembliesToIgnore];
+            var customAssembliesString = Configuration.GetSection(MogglesConfigurationKeys.RootSection)[MogglesConfigurationKeys.CustomAssembliesToIgnore];
             return !string.IsNullOrEmpty(customAssembliesString) ? customAssembliesString.Split(',') : new string[] {};
         }
 
         public string GetInstrumentationKey()
         {
-            return Configuration.GetSection(ConfigurationKeys.RootSection)[ConfigurationKeys.InstrumentationKey];
+            return Configuration.GetSection(MogglesConfigurationKeys.RootSection)[MogglesConfigurationKeys.InstrumentationKey];
         }
 
         public string GetCacheRefreshQueue()
         {
-            return Configuration.GetSection(ConfigurationKeys.RootSection)[ConfigurationKeys.CacheRefreshQueue];
+            return Configuration.GetSection(MogglesConfigurationKeys.RootSection)[MogglesConfigurationKeys.CacheRefreshQueue];
         }
     }
 }

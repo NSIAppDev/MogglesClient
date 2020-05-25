@@ -23,14 +23,14 @@ namespace MogglesClient
 
         public List<FeatureToggle> GetFeatureTogglesFromCache()
         {
-            var featureToggles = _cache.GetFeatureTogglesFromCache(ConfigurationKeys.FeatureTogglesCacheKey);
+            var featureToggles = _cache.GetFeatureTogglesFromCache(MogglesConfigurationKeys.FeatureTogglesCacheKey);
 
             if (FeatureTogglesExist(featureToggles))
             {
                 return featureToggles;
             }
 
-            var previouslyCachedFeatureToggles = _cache.GetFeatureTogglesFromCache(ConfigurationKeys.PreviouslyCachedFeatureTogglesCacheKey);
+            var previouslyCachedFeatureToggles = _cache.GetFeatureTogglesFromCache(MogglesConfigurationKeys.PreviouslyCachedFeatureTogglesCacheKey);
 
             if (FeatureTogglesExist(previouslyCachedFeatureToggles))
             {
@@ -48,15 +48,15 @@ namespace MogglesClient
             {
                 var featureToggles = _featureToggleProvider.GetFeatureToggles();
 
-                _cache.CacheFeatureToggles(ConfigurationKeys.FeatureTogglesCacheKey, featureToggles, _mogglesConfigurationManager.GetCachingTime());
-                _cache.CacheFeatureToggles(ConfigurationKeys.PreviouslyCachedFeatureTogglesCacheKey, featureToggles, isExpiringCacheEntry: false);
+                _cache.CacheFeatureToggles(MogglesConfigurationKeys.FeatureTogglesCacheKey, featureToggles, _mogglesConfigurationManager.GetCachingTime());
+                _cache.CacheFeatureToggles(MogglesConfigurationKeys.PreviouslyCachedFeatureTogglesCacheKey, featureToggles, isExpiringCacheEntry: false);
                 _cache.SubscribeToCacheExpirationEvent(CacheFeatureToggles);
 
                 _featureToggleLoggingService.TrackEvent("Main cache and backup cache were set successfully.");
             }
             catch (MogglesClientException)
             {
-                _cache.CacheFeatureToggles(ConfigurationKeys.FeatureTogglesCacheKey, new List<FeatureToggle>(), _mogglesConfigurationManager.GetOnErrorCachingTime());
+                _cache.CacheFeatureToggles(MogglesConfigurationKeys.FeatureTogglesCacheKey, new List<FeatureToggle>(), _mogglesConfigurationManager.GetOnErrorCachingTime());
                 _cache.SubscribeToCacheExpirationEvent(CacheFeatureToggles);
             }
         }
