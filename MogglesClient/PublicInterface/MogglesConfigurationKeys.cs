@@ -1,6 +1,6 @@
-﻿namespace MogglesClient
+﻿namespace MogglesClient.PublicInterface
 {
-    internal static class ConfigurationKeys
+    public class MogglesConfigurationKeys
     {
         internal static string DefaultTimeoutValue = "30";
         internal static int DefaultCachingTime = 3600;
