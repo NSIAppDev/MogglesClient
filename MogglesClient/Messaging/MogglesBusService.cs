@@ -26,14 +26,29 @@ namespace MogglesClient.Messaging
                     h.Password(_mogglesConfigurationManager.GetMessageBusPassword());
                 });
 
-                cfg.ReceiveEndpoint(host, $"{_mogglesConfigurationManager.GetCacheRefreshQueue()}_{_mogglesConfigurationManager.GetApplicationName()}_{_mogglesConfigurationManager.GetEnvironment()}", e =>
+                var cacheRefreshQueue = _mogglesConfigurationManager.GetCacheRefreshQueue();
+                if (UseCustomQueue(cacheRefreshQueue))
                 {
-                    e.Consumer<ClearTogglesCacheConsumer>();
-                });
-
+                    cfg.ReceiveEndpoint(host, cacheRefreshQueue, e =>
+                    {
+                        e.Consumer<ClearTogglesCacheConsumer>();
+                    });
+                }
+                else
+                {
+                    cfg.ReceiveEndpoint(host, e =>
+                    {
+                        e.Consumer<ClearTogglesCacheConsumer>();
+                    });
+                }
             });
 
             _busControl.Start();
+
+            bool UseCustomQueue(string cacheRefreshQueue)
+            {
+                return !string.IsNullOrEmpty(cacheRefreshQueue);
+            }
         }
 
         public void Publish(RegisteredTogglesUpdate registeredTogglesUpdate)
