@@ -41,7 +41,7 @@ ____________________________________
   * If the impact of a toggle needs to be visible prior to the new refresh time of the cache, a *force cache* event (triggered by [Moggles](https://github.com/NSIAppDev/Moggles)) can be handled by the client.   
   * MogglesClient will read the message from the queue and based on the **Application** and **Environment** matched by the [configuration keys](#how-to-use) provided it will refresh the feature toggles values from the application. The expected message contract can be found [here](./MogglesClient/Messaging/RefreshCache/RefreshTogglesCache.cs) (*the namespace of the contract class will also have to match*).
   * The cache will be refreshed as soon as the message is published and read from the queue.
-  * The queue name for this event will need to be provided.
+  * If the queue name for the event is not provided, a temporary queue will be created. (It will have a randomly assigned name & is going to be deleted when there are no consumers subscribed to the queue)
   
   More information on how this feature is implemented can be found in the [Moggles documentation](https://github.com/NSIAppDev/Moggles#force-cache-refresh).
   
