@@ -22,10 +22,13 @@ namespace MogglesClient.Messaging.RefreshCache
 
             var msg = context.Message;
 
-            if (msg.ApplicationName.ToLowerInvariant() == _mogglesConfigurationManager.GetApplicationName().ToLowerInvariant() &&
-                msg.Environment.ToLowerInvariant() == _mogglesConfigurationManager.GetEnvironment().ToLowerInvariant())
+            var currentApplication = _mogglesConfigurationManager.GetApplicationName();
+            var currentEnvironment = _mogglesConfigurationManager.GetEnvironment();
+
+            if (msg.ApplicationName.ToLowerInvariant() == currentApplication.ToLowerInvariant() &&
+                msg.Environment.ToLowerInvariant() == currentEnvironment.ToLowerInvariant())
             {
-                _featureToggleLoggingService.TrackEvent($"Handled cache refresh event for {msg.ApplicationName}/{msg.Environment}");
+                _featureToggleLoggingService.TrackEvent($"Handled cache refresh event for {msg.ApplicationName}/{msg.Environment}", currentApplication, currentEnvironment);
                 _featureToggleService.CacheFeatureToggles();
             }
 

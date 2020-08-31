@@ -80,7 +80,7 @@ namespace MogglesClient.Messaging.EnvironmentDetector
                         sb.AppendLine(exSub.Message);
                     }
 
-                    _featureToggleLoggingService.TrackException(ex, sb.ToString());
+                    _featureToggleLoggingService.TrackException(ex, sb.ToString(), _mogglesConfigurationManager.GetApplicationName(), _mogglesConfigurationManager.GetEnvironment());
                 }
             }
 
