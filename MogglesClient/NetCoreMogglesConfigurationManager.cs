@@ -44,6 +44,12 @@ namespace MogglesClient
             return Configuration.GetSection(MogglesConfigurationKeys.RootSection)[MogglesConfigurationKeys.Url] ?? throw new MogglesClientException("There is no \"Url\" value defined in the configuration file");
         }
 
+        public string GetTokenSigningKey()
+        {
+            return Configuration.GetSection(MogglesConfigurationKeys.RootSection)[MogglesConfigurationKeys.TokenSigningKey] ?? throw new MogglesClientException("There is no \"TokenSigningKey\" value defined in the configuration file");
+
+        }
+
         public TimeSpan GetTimeoutValue()
         {
             var timeoutString =

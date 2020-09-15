@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Claims;
+using System.Text;
+using System.Web;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using MogglesClient.PublicInterface;
 using MogglesClient.Logging;
@@ -68,6 +73,23 @@ namespace MogglesClient
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Authorization = GetSecurityToken();
+        }
+
+        private AuthenticationHeaderValue GetSecurityToken() => new AuthenticationHeaderValue("Bearer", GenerateJwtToken());
+
+        private string GenerateJwtToken()
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = _mogglesConfigurationManager.GetTokenSigningKey();
+            var credentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)), SecurityAlgorithms.HmacSha256Signature);
+
+            var  username = HttpContext.Current.User.Identity.Name ?? "";
+            var claims = new[] {new Claim("sub", username), new Claim("unique_name", username)};
+
+            var securityToken = new JwtSecurityToken(null, null, claims, new DateTime?(), DateTime.Now.AddMinutes(1.0), credentials);
+
+            return tokenHandler.WriteToken(securityToken);
         }
     }
 }
