@@ -103,12 +103,20 @@ namespace MogglesClient.PublicInterface
 
         private void ConfigureComponentsForMessaging()
         {
-            _busService = new MogglesBusService(_mogglesConfigurationManager);
+            _busService = CreateBusService();
             MogglesContainer.Register(_busService);
 
             _featureToggleEnvironmentDetector = new FeatureToggleEnvironmentDetector(_featureToggleLoggingService, _mogglesConfigurationManager, _busService);
             MogglesContainer.Register(_featureToggleEnvironmentDetector);
         }
+
+#if NETFULL
+        private IMogglesBusService CreateBusService() => new NetFullMogglesBusService(_mogglesConfigurationManager);
+#endif
+
+#if NETCORE
+        private IMogglesBusService CreateBusService() => new NetCoreMogglesBusService(_mogglesConfigurationManager);
+#endif
 
 #if NETFULL
         private void RegisterComponentsForNetFull(IMogglesConfigurationManager configurationManager, IMogglesLoggingService loggingService)

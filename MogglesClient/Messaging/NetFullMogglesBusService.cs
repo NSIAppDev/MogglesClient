@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if NETFULL
+using System;
 using MassTransit;
 using MogglesClient.Messaging.RefreshCache;
 using MogglesClient.PublicInterface;
@@ -6,12 +7,12 @@ using MogglesContracts;
 
 namespace MogglesClient.Messaging
 {
-    public class MogglesBusService : IMogglesBusService
+    public class NetFullMogglesBusService : IMogglesBusService
     {
         private readonly IMogglesConfigurationManager _mogglesConfigurationManager;
         private IBusControl _busControl;
 
-        public MogglesBusService(IMogglesConfigurationManager mogglesConfigurationManager)
+        public NetFullMogglesBusService(IMogglesConfigurationManager mogglesConfigurationManager)
         {
             _mogglesConfigurationManager = mogglesConfigurationManager;
         }
@@ -57,3 +58,4 @@ namespace MogglesClient.Messaging
         }
     }
 }
+#endif
