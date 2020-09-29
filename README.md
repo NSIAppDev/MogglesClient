@@ -61,7 +61,35 @@ Different information is logged in [Application Insights](https://docs.microsoft
     --- | --- 
     The API call that retrieves the feature toggles fails | When the cache entries are successfully refreshed 
     When the FTs are not available (both cache entries are empty) | When a force cache refresh event was handled 
-    When detecting the deployed feature toggles and one of the assemblies it searches in could not be loaded | 
+    When detecting the deployed feature toggles and one of the assemblies it searches in could not be loaded |   
+    
+ #### Custom Logging
+
+If Application Insights is not an available option or you want to log to another location:
+* Provide an implementation for [IMogglesLoggingService](https://github.com/NSIAppDev/MogglesClient/blob/master/MogglesClient/PublicInterface/IMogglesLoggingService.cs)
+```C# 
+    public class CustomLoggingService : IMogglesLoggingService
+    {
+        public void TrackEvent(string eventName, string application, string environment)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void TrackException(Exception ex, string application, string environment)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void TrackException(Exception ex, string customMessage, string application, string environment)
+        {
+            throw new NotImplementedException();
+        }
+    }
+```
+* Call overload of _ConfigureAndStartClient_:  
+```C# 
+Moggles.ConfigureAndStartClient(loggingService: new CustomLoggingService());
+```
 
 ## How to use?
 
