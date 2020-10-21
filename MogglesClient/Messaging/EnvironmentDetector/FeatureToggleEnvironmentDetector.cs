@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using MogglesClient.Logging;
 using MogglesClient.PublicInterface;
 using MogglesContracts;
 
@@ -14,15 +13,17 @@ namespace MogglesClient.Messaging.EnvironmentDetector
         private readonly IMogglesLoggingService _featureToggleLoggingService;
         private readonly IMogglesConfigurationManager _mogglesConfigurationManager;
         private readonly IMogglesBusService _busService;
+        private readonly IAssemblyProvider _assemblyProvider;
         private readonly List<string> _assembliesToIgnore = new List<string>{"System", "Microsoft", "Autofac", "mscorlib", "EntityFramework", "Antlr3", "Antlr3.Runtime",
             "Glimpse", "Newtonsoft", "log4net", "AutoMapper", "EPPlus", "Fluent", "Kendo", "MassTransit", "MediatR", "Chutzpah", "WebGrease",
             "RabbitMQ.Client", "DotNetOpenAuth.Core"};
 
-        public FeatureToggleEnvironmentDetector(IMogglesLoggingService featureToggleLoggingService, IMogglesConfigurationManager mogglesConfigurationManager, IMogglesBusService busService)
+        public FeatureToggleEnvironmentDetector(IMogglesLoggingService featureToggleLoggingService, IMogglesConfigurationManager mogglesConfigurationManager, IMogglesBusService busService, IAssemblyProvider assemblyProvider)
         {
             _featureToggleLoggingService = featureToggleLoggingService;
             _mogglesConfigurationManager = mogglesConfigurationManager;
             _busService = busService;
+            _assemblyProvider = assemblyProvider;
 
             AddCustomAssembliesToAssembliesToIgnoreList();
         }
@@ -89,9 +90,7 @@ namespace MogglesClient.Messaging.EnvironmentDetector
 
         private Assembly[] GetValidAssemblies()
         {
-            AppDomain currentDomain = AppDomain.CurrentDomain;
-
-            var assemblies = currentDomain.GetAssemblies().Where(a => !a.GlobalAssemblyCache).ToList();
+            var assemblies = _assemblyProvider.GetCurrentDomainAssemblies();
             var validAssemblies = new List<Assembly>();
 
             foreach (var assembly in assemblies)
