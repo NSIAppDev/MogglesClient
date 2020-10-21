@@ -106,7 +106,7 @@ namespace MogglesClient.PublicInterface
             _busService = CreateBusService();
             MogglesContainer.Register(_busService);
 
-            _featureToggleEnvironmentDetector = new FeatureToggleEnvironmentDetector(_featureToggleLoggingService, _mogglesConfigurationManager, _busService);
+            _featureToggleEnvironmentDetector = new FeatureToggleEnvironmentDetector(_featureToggleLoggingService, _mogglesConfigurationManager, _busService, new AssemblyProvider());
             MogglesContainer.Register(_featureToggleEnvironmentDetector);
         }
 

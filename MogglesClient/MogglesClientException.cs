@@ -4,7 +4,7 @@ namespace MogglesClient
 {
     internal class MogglesClientException: Exception
     {
-        internal MogglesClientException() { }
+        public MogglesClientException() { }
 
         internal MogglesClientException(string message): base(message) { }
     }

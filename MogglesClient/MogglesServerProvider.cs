@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using MogglesClient.PublicInterface;
-using MogglesClient.Logging;
 
 namespace MogglesClient
 {
