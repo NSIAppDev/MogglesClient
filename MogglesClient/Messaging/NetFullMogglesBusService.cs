@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if NETFULL
+using System;
 using MassTransit;
 using MogglesClient.Messaging.RefreshCache;
 using MogglesClient.PublicInterface;
@@ -6,12 +7,12 @@ using MogglesContracts;
 
 namespace MogglesClient.Messaging
 {
-    public class MogglesBusService : IMogglesBusService
+    public class NetFullMogglesBusService : IMogglesBusService
     {
         private readonly IMogglesConfigurationManager _mogglesConfigurationManager;
         private IBusControl _busControl;
 
-        public MogglesBusService(IMogglesConfigurationManager mogglesConfigurationManager)
+        public NetFullMogglesBusService(IMogglesConfigurationManager mogglesConfigurationManager)
         {
             _mogglesConfigurationManager = mogglesConfigurationManager;
         }
@@ -26,14 +27,29 @@ namespace MogglesClient.Messaging
                     h.Password(_mogglesConfigurationManager.GetMessageBusPassword());
                 });
 
-                cfg.ReceiveEndpoint(host, $"{_mogglesConfigurationManager.GetCacheRefreshQueue()}_{_mogglesConfigurationManager.GetApplicationName()}_{_mogglesConfigurationManager.GetEnvironment()}", e =>
+                var cacheRefreshQueue = _mogglesConfigurationManager.GetCacheRefreshQueue();
+                if (UseCustomQueue(cacheRefreshQueue))
                 {
-                    e.Consumer<ClearTogglesCacheConsumer>();
-                });
-
+                    cfg.ReceiveEndpoint(host, cacheRefreshQueue, e =>
+                    {
+                        e.Consumer<ClearTogglesCacheConsumer>();
+                    });
+                }
+                else
+                {
+                    cfg.ReceiveEndpoint(host, e =>
+                    {
+                        e.Consumer<ClearTogglesCacheConsumer>();
+                    });
+                }
             });
 
             _busControl.Start();
+
+            bool UseCustomQueue(string cacheRefreshQueue)
+            {
+                return !string.IsNullOrEmpty(cacheRefreshQueue);
+            }
         }
 
         public void Publish(RegisteredTogglesUpdate registeredTogglesUpdate)
@@ -42,3 +58,4 @@ namespace MogglesClient.Messaging
         }
     }
 }
+#endif

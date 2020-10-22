@@ -21,26 +21,26 @@ namespace MogglesClient.Logging
             }
         }
 
-        public void TrackException(Exception ex)
+        public void TrackException(Exception ex, string application, string environment)
         {
-            _telemetryClient?.TrackException(ex, GetProperties());
+            _telemetryClient?.TrackException(ex, GetProperties(application, environment));
         }
 
-        public void TrackException(Exception ex, string customMessage)
+        public void TrackException(Exception ex, string customMessage, string application, string environment)
         {
-            var props = GetProperties();
+            var props = GetProperties(application, environment);
             props.Add("CustomMessage", customMessage);
             _telemetryClient?.TrackException(ex, props);
         }
 
-        public void TrackEvent(string eventName)
+        public void TrackEvent(string eventName, string application, string environment)
         {
-            _telemetryClient?.TrackEvent(eventName, GetProperties());
+            _telemetryClient?.TrackEvent(eventName, GetProperties(application, environment));
         }
 
-        private Dictionary<string, string> GetProperties()
+        private Dictionary<string, string> GetProperties(string application, string environment)
         {
-            return new Dictionary<string, string> { { "Application", _mogglesConfigurationManager.GetApplicationName() }, { "Environment", _mogglesConfigurationManager.GetEnvironment() } };
+            return new Dictionary<string, string> { { "Application", application }, { "Environment", environment } };
         }
     }
 }

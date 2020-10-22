@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using MogglesClient.PublicInterface;
-using MogglesClient.Logging;
 
 namespace MogglesClient
 { 
-
     public class MogglesToggleService
     {
         private readonly ICache _cache;
@@ -37,7 +35,7 @@ namespace MogglesClient
                 return previouslyCachedFeatureToggles;
             }
 
-            _featureToggleLoggingService.TrackException(new MogglesClientException("Feature toggles were not cached and previous values were not available!"));
+            _featureToggleLoggingService.TrackException(new MogglesClientException("Feature toggles were not cached and previous values were not available!"), _mogglesConfigurationManager.GetApplicationName(), _mogglesConfigurationManager.GetEnvironment());
 
             return new List<FeatureToggle>();
         }
@@ -52,7 +50,7 @@ namespace MogglesClient
                 _cache.CacheFeatureToggles(MogglesConfigurationKeys.PreviouslyCachedFeatureTogglesCacheKey, featureToggles, isExpiringCacheEntry: false);
                 _cache.SubscribeToCacheExpirationEvent(CacheFeatureToggles);
 
-                _featureToggleLoggingService.TrackEvent("Main cache and backup cache were set successfully.");
+                _featureToggleLoggingService.TrackEvent("Main cache and backup cache were set successfully.", _mogglesConfigurationManager.GetApplicationName(), _mogglesConfigurationManager.GetEnvironment());
             }
             catch (MogglesClientException)
             {

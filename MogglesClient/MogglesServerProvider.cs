@@ -9,7 +9,6 @@ using System.Web;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using MogglesClient.PublicInterface;
-using MogglesClient.Logging;
 
 namespace MogglesClient
 {
@@ -44,13 +43,13 @@ namespace MogglesClient
                 }
                 catch (AggregateException ex)
                 {
-                    _featureToggleLoggingService.TrackException(ex);
+                    _featureToggleLoggingService.TrackException(ex, _mogglesConfigurationManager.GetApplicationName(), _mogglesConfigurationManager.GetEnvironment());
                     throw new MogglesClientException("An error occurred while getting the feature toggles from the server!");
                 }
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    _featureToggleLoggingService.TrackException(new MogglesClientException("An error occurred while getting the feature toggles from the server!"));
+                    _featureToggleLoggingService.TrackException(new MogglesClientException("An error occurred while getting the feature toggles from the server!"), _mogglesConfigurationManager.GetApplicationName(), _mogglesConfigurationManager.GetEnvironment());
                     throw new MogglesClientException(
                         "An error occurred while getting the feature toggles from the server!");
                 }
