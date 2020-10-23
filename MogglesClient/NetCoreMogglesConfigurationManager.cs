@@ -46,7 +46,7 @@ namespace MogglesClient
 
         public string GetTokenSigningKey()
         {
-            return Configuration.GetSection(MogglesConfigurationKeys.RootSection)[MogglesConfigurationKeys.TokenSigningKey] ?? throw new MogglesClientException("There is no \"TokenSigningKey\" value defined in the configuration file");
+            return Configuration.GetSection(MogglesConfigurationKeys.RootSection)[MogglesConfigurationKeys.TokenSigningKey];
 
         }
 

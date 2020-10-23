@@ -43,9 +43,7 @@ namespace MogglesClient
 
         public string GetTokenSigningKey()
         {
-            return ConfigurationManager.AppSettings[MogglesConfigurationKeys.TokenSigningKey]
-                   ?? throw new MogglesClientException(
-                       "There is no \"TokenSigningKey\" value defined in the configuration file");
+            return ConfigurationManager.AppSettings[MogglesConfigurationKeys.TokenSigningKey];
         }
 
         public TimeSpan GetTimeoutValue()
