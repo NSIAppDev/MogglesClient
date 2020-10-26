@@ -45,6 +45,5 @@
         internal static string CacheRefreshQueue = "CacheRefreshQueue";
         internal static string TokenSigningKey = $"TokenSigningKey";
 #endif
-
     }
 }

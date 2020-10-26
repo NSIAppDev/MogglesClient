@@ -20,7 +20,5 @@ namespace MogglesClient.PublicInterface
         string[] GetCustomAssemblies();
         string GetInstrumentationKey();
         string GetCacheRefreshQueue();
-
-
     }
 }
