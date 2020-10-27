@@ -46,7 +46,11 @@ namespace MogglesClient
 
         public string GetTokenSigningKey()
         {
-            return Configuration.GetSection(MogglesConfigurationKeys.RootSection)[MogglesConfigurationKeys.TokenSigningKey];
+            var tokenSigningKey = Configuration[MogglesConfigurationKeys.TokenSigningKey];
+            if (string.IsNullOrEmpty(tokenSigningKey))
+                tokenSigningKey = Configuration.GetSection(MogglesConfigurationKeys.RootSection)[MogglesConfigurationKeys.AlternateTokenSigningKey];
+
+            return tokenSigningKey;
         }
 
         public TimeSpan GetTimeoutValue()

@@ -26,7 +26,9 @@
         internal static string CustomAssembliesToIgnore = $"{RootSection}.EnvironmentDetectorCustomAssembliesToIgnore";
         internal static string InstrumentationKey = $"{RootSection}.ApplicationInsightsInstrumentationKey";
         internal static string CacheRefreshQueue = $"{RootSection}.CacheRefreshQueue";
+        internal static string AlternateTokenSigningKey = $"{RootSection}.TokenSigningKey";
         internal static string TokenSigningKey = "MogglesTokenSigningKey";
+
 #endif
 
 #if NETCORE
@@ -43,7 +45,8 @@
         internal static string CustomAssembliesToIgnore = "EnvironmentDetectorCustomAssembliesToIgnore";
         internal static string InstrumentationKey = "ApplicationInsightsInstrumentationKey";
         internal static string CacheRefreshQueue = "CacheRefreshQueue";
-        internal static string TokenSigningKey = $"TokenSigningKey";
+        internal static string TokenSigningKey = "MogglesTokenSigningKey";
+        internal static string AlternateTokenSigningKey = "TokenSigningKey";
 #endif
     }
 }
