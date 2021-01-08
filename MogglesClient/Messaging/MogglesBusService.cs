@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !NET452
+using System;
 using MassTransit;
 using MogglesClient.Messaging.RefreshCache;
 using MogglesClient.PublicInterface;
@@ -57,3 +58,4 @@ namespace MogglesClient.Messaging
         }
     }
 }
+#endif
