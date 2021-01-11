@@ -110,12 +110,10 @@ namespace MogglesClient.PublicInterface
             MogglesContainer.Register(_featureToggleEnvironmentDetector);
         }
 
-#if NETFULL
-        private IMogglesBusService CreateBusService() => new NetFullMogglesBusService(_mogglesConfigurationManager);
-#endif
-
-#if NETCORE
-        private IMogglesBusService CreateBusService() => new NetCoreMogglesBusService(_mogglesConfigurationManager);
+#if NET452
+        private IMogglesBusService CreateBusService() => new LegacyMogglesBusService(_mogglesConfigurationManager);
+#else
+        private IMogglesBusService CreateBusService() => new MogglesBusService(_mogglesConfigurationManager);
 #endif
 
 #if NETFULL

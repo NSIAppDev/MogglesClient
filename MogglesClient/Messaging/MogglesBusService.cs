@@ -1,4 +1,4 @@
-﻿#if NETFULL
+﻿#if !NET452
 using System;
 using MassTransit;
 using MogglesClient.Messaging.RefreshCache;
@@ -7,12 +7,12 @@ using MogglesContracts;
 
 namespace MogglesClient.Messaging
 {
-    public class NetFullMogglesBusService : IMogglesBusService
+    public class MogglesBusService : IMogglesBusService
     {
         private readonly IMogglesConfigurationManager _mogglesConfigurationManager;
         private IBusControl _busControl;
 
-        public NetFullMogglesBusService(IMogglesConfigurationManager mogglesConfigurationManager)
+        public MogglesBusService(IMogglesConfigurationManager mogglesConfigurationManager)
         {
             _mogglesConfigurationManager = mogglesConfigurationManager;
         }
@@ -21,7 +21,7 @@ namespace MogglesClient.Messaging
         {
             _busControl = Bus.Factory.CreateUsingRabbitMq(cfg =>
             {
-                var host = cfg.Host(new Uri(_mogglesConfigurationManager.GetMessageBusUrl()), h =>
+                cfg.Host(new Uri(_mogglesConfigurationManager.GetMessageBusUrl()), h =>
                 {
                     h.Username(_mogglesConfigurationManager.GetMessageBusUser());
                     h.Password(_mogglesConfigurationManager.GetMessageBusPassword());
@@ -30,14 +30,14 @@ namespace MogglesClient.Messaging
                 var cacheRefreshQueue = _mogglesConfigurationManager.GetCacheRefreshQueue();
                 if (UseCustomQueue(cacheRefreshQueue))
                 {
-                    cfg.ReceiveEndpoint(host, cacheRefreshQueue, e =>
+                    cfg.ReceiveEndpoint(cacheRefreshQueue, e =>
                     {
                         e.Consumer<ClearTogglesCacheConsumer>();
                     });
                 }
                 else
                 {
-                    cfg.ReceiveEndpoint(host, e =>
+                    cfg.ReceiveEndpoint(e =>
                     {
                         e.Consumer<ClearTogglesCacheConsumer>();
                     });
