@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using MogglesClient.Logging;
 using MogglesClient.PublicInterface;
 using MogglesContracts;
 
@@ -16,7 +16,7 @@ namespace MogglesClient.Messaging.EnvironmentDetector
         private readonly IMogglesBusService _busService;
         private readonly List<string> _assembliesToIgnore = new List<string>{"System", "Microsoft", "Autofac", "mscorlib", "EntityFramework", "Antlr3", "Antlr3.Runtime",
             "Glimpse", "Newtonsoft", "log4net", "AutoMapper", "EPPlus", "Fluent", "Kendo", "MassTransit", "MediatR", "Chutzpah", "WebGrease",
-            "RabbitMQ.Client", "DotNetOpenAuth.Core"};
+            "RabbitMQ.Client", "DotNetOpenAuth.Core", "Anonymously", "GreenPipes", "MogglesClient", "NCrontab", "NewId", "NLog", "Polly", "NSMessagingContracts", "NSAlertService", "NSSecurity", "OpsGenieAlerts"};
 
         public FeatureToggleEnvironmentDetector(IMogglesLoggingService featureToggleLoggingService, IMogglesConfigurationManager mogglesConfigurationManager, IMogglesBusService busService)
         {
@@ -89,30 +89,14 @@ namespace MogglesClient.Messaging.EnvironmentDetector
 
         private Assembly[] GetValidAssemblies()
         {
-            AppDomain currentDomain = AppDomain.CurrentDomain;
+            var assembliesNames = Assembly.GetEntryAssembly()?.GetReferencedAssemblies();
 
-            var assemblies = currentDomain.GetAssemblies().Where(a => !a.GlobalAssemblyCache).ToList();
-            var validAssemblies = new List<Assembly>();
+            var validAssemblies = assembliesNames?.Where(assembly => !_assembliesToIgnore.Any(assembly.FullName.Contains)).ToList();
+            validAssemblies?.Add(Assembly.GetEntryAssembly()?.GetName());
 
-            foreach (var assembly in assemblies)
-            {
-                bool isValidAssembly = true;
+            var assemblies = validAssemblies?.Select(Assembly.Load).Where(a => !a.GlobalAssemblyCache);
 
-                foreach (var assemblyToIgnore in _assembliesToIgnore)
-                {
-                    if (assembly.FullName.Contains(assemblyToIgnore))
-                    {
-                        isValidAssembly = false;
-                    }
-                }
-
-                if (isValidAssembly)
-                {
-                    validAssemblies.Add(assembly);
-                }
-            }
-
-            return validAssemblies.ToArray();
+            return assemblies?.ToArray();
         }
     }
 }
