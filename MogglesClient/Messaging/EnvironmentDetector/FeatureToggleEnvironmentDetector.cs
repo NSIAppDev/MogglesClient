@@ -14,15 +14,17 @@ namespace MogglesClient.Messaging.EnvironmentDetector
         private readonly IMogglesLoggingService _featureToggleLoggingService;
         private readonly IMogglesConfigurationManager _mogglesConfigurationManager;
         private readonly IMogglesBusService _busService;
+        private readonly IAssemblyProvider _assemblyProvider;
         private readonly List<string> _assembliesToIgnore = new List<string>{"System", "Microsoft", "Autofac", "mscorlib", "EntityFramework", "Antlr3", "Antlr3.Runtime",
             "Glimpse", "Newtonsoft", "log4net", "AutoMapper", "EPPlus", "Fluent", "Kendo", "MassTransit", "MediatR", "Chutzpah", "WebGrease",
             "RabbitMQ.Client", "DotNetOpenAuth.Core", "Anonymously", "GreenPipes", "MogglesClient", "NCrontab", "NewId", "NLog", "Polly", "NSMessagingContracts", "NSAlertService", "NSSecurity", "OpsGenieAlerts"};
 
-        public FeatureToggleEnvironmentDetector(IMogglesLoggingService featureToggleLoggingService, IMogglesConfigurationManager mogglesConfigurationManager, IMogglesBusService busService)
+        public FeatureToggleEnvironmentDetector(IMogglesLoggingService featureToggleLoggingService, IMogglesConfigurationManager mogglesConfigurationManager, IMogglesBusService busService, IAssemblyProvider assemblyProvider)
         {
             _featureToggleLoggingService = featureToggleLoggingService;
             _mogglesConfigurationManager = mogglesConfigurationManager;
             _busService = busService;
+            _assemblyProvider = assemblyProvider;
 
             AddCustomAssembliesToAssembliesToIgnoreList();
         }

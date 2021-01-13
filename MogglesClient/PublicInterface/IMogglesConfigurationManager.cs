@@ -10,6 +10,7 @@ namespace MogglesClient.PublicInterface
         string GetMessageBusUser();
         string GetMessageBusPassword();
         string GetTogglesUrl();
+        string GetTokenSigningKey();
         TimeSpan GetTimeoutValue();
         DateTimeOffset GetCachingTime();
         DateTimeOffset GetOnErrorCachingTime();

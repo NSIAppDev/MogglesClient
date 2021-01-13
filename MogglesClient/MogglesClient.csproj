@@ -2,8 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    
-     <TargetFrameworks>net452;net462;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net452;net462;netstandard2.0</TargetFrameworks>
     <!-- Nuget Attributes -->
     <PackageId>MogglesClient</PackageId>
     <Authors>Moggles Build System</Authors>
@@ -17,6 +16,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.15.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.7.1" />
   </ItemGroup>
 
   <!-- .NET Standard 2.0 references, compilation flags and build options -->
@@ -24,16 +24,30 @@
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.1.8" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.1.8" />
-    <PackageReference Include="MassTransit" Version="7.0.4" />
-    <PackageReference Include="MassTransit.RabbitMQ" Version="7.0.4" />
+    <PackageReference Include="MassTransit" Version="7.1.2" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="7.1.2" />
   </ItemGroup>
-  
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <DefineConstants>NETCORE</DefineConstants>
-  </PropertyGroup>
+
+  <!-- .NET 4.6.2 references, compilation flags and build options -->
+  <ItemGroup Condition="'$(TargetFramework)'=='net462'">
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Net.Http" />
+    <PackageReference Include="MassTransit" Version="7.1.2" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="7.1.2" />
+  </ItemGroup>
 
   <!-- .NET 4.5.2 references, compilation flags and build options -->
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' OR '$(TargetFramework)'=='net462'">
+  <ItemGroup Condition="'$(TargetFramework)'=='net452'">
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -49,9 +63,17 @@
     <PackageReference Include="MassTransit" Version="5.5.6" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="5.5.6" />
   </ItemGroup>
-  
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <DefineConstants>NETCORE</DefineConstants>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net452' OR '$(TargetFramework)'=='net462'">
     <DefineConstants>NETFULL</DefineConstants>
   </PropertyGroup>
-  
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>MogglesClientTests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
 </Project>

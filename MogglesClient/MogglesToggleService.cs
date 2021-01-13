@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using MogglesClient.PublicInterface;
-using MogglesClient.Logging;
 
 namespace MogglesClient
 { 
-
     public class MogglesToggleService
     {
         private readonly ICache _cache;

@@ -106,16 +106,14 @@ namespace MogglesClient.PublicInterface
             _busService = CreateBusService();
             MogglesContainer.Register(_busService);
 
-            _featureToggleEnvironmentDetector = new FeatureToggleEnvironmentDetector(_featureToggleLoggingService, _mogglesConfigurationManager, _busService);
+            _featureToggleEnvironmentDetector = new FeatureToggleEnvironmentDetector(_featureToggleLoggingService, _mogglesConfigurationManager, _busService, new AssemblyProvider());
             MogglesContainer.Register(_featureToggleEnvironmentDetector);
         }
 
-#if NETFULL
-        private IMogglesBusService CreateBusService() => new NetFullMogglesBusService(_mogglesConfigurationManager);
-#endif
-
-#if NETCORE
-        private IMogglesBusService CreateBusService() => new NetCoreMogglesBusService(_mogglesConfigurationManager);
+#if NET452
+        private IMogglesBusService CreateBusService() => new LegacyMogglesBusService(_mogglesConfigurationManager);
+#else
+        private IMogglesBusService CreateBusService() => new MogglesBusService(_mogglesConfigurationManager);
 #endif
 
 #if NETFULL
