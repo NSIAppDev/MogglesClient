@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -16,7 +17,7 @@ namespace MogglesClient.Messaging.EnvironmentDetector
         private readonly IAssemblyProvider _assemblyProvider;
         private readonly List<string> _assembliesToIgnore = new List<string>{"System", "Microsoft", "Autofac", "mscorlib", "EntityFramework", "Antlr3", "Antlr3.Runtime",
             "Glimpse", "Newtonsoft", "log4net", "AutoMapper", "EPPlus", "Fluent", "Kendo", "MassTransit", "MediatR", "Chutzpah", "WebGrease",
-            "RabbitMQ.Client", "DotNetOpenAuth.Core"};
+            "RabbitMQ.Client", "DotNetOpenAuth.Core", "Anonymously", "GreenPipes", "MogglesClient", "NCrontab", "NewId", "NLog", "Polly", "NSMessagingContracts", "NSAlertService", "NSSecurity", "OpsGenieAlerts"};
 
         public FeatureToggleEnvironmentDetector(IMogglesLoggingService featureToggleLoggingService, IMogglesConfigurationManager mogglesConfigurationManager, IMogglesBusService busService, IAssemblyProvider assemblyProvider)
         {
@@ -90,28 +91,14 @@ namespace MogglesClient.Messaging.EnvironmentDetector
 
         private Assembly[] GetValidAssemblies()
         {
-            var assemblies = _assemblyProvider.GetCurrentDomainAssemblies();
-            var validAssemblies = new List<Assembly>();
+            var assembliesNames = Assembly.GetEntryAssembly()?.GetReferencedAssemblies();
 
-            foreach (var assembly in assemblies)
-            {
-                bool isValidAssembly = true;
+            var validAssemblies = assembliesNames?.Where(assembly => !_assembliesToIgnore.Any(assembly.FullName.Contains)).ToList();
+            validAssemblies?.Add(Assembly.GetEntryAssembly()?.GetName());
 
-                foreach (var assemblyToIgnore in _assembliesToIgnore)
-                {
-                    if (assembly.FullName.Contains(assemblyToIgnore))
-                    {
-                        isValidAssembly = false;
-                    }
-                }
+            var assemblies = validAssemblies?.Select(Assembly.Load).Where(a => !a.GlobalAssemblyCache);
 
-                if (isValidAssembly)
-                {
-                    validAssemblies.Add(assembly);
-                }
-            }
-
-            return validAssemblies.ToArray();
+            return assemblies?.ToArray();
         }
     }
 }
