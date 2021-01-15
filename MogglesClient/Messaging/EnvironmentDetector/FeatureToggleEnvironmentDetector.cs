@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -88,7 +87,7 @@ namespace MogglesClient.Messaging.EnvironmentDetector
 
             return featureToggleNames.ToArray();
         }
-
+#if NETCORE
         private Assembly[] GetValidAssemblies()
         {
             var assembliesNames = Assembly.GetEntryAssembly()?.GetReferencedAssemblies();
@@ -100,5 +99,34 @@ namespace MogglesClient.Messaging.EnvironmentDetector
 
             return assemblies?.ToArray();
         }
+#endif
+
+#if NETFULL
+        private Assembly[] GetValidAssemblies()
+        {
+            var assemblies = _assemblyProvider.GetCurrentDomainAssemblies();
+            var validAssemblies = new List<Assembly>();
+
+            foreach (var assembly in assemblies)
+            {
+                bool isValidAssembly = true;
+
+                foreach (var assemblyToIgnore in _assembliesToIgnore)
+                {
+                    if (assembly.FullName.Contains(assemblyToIgnore))
+                    {
+                        isValidAssembly = false;
+                    }
+                }
+
+                if (isValidAssembly)
+                {
+                    validAssemblies.Add(assembly);
+                }
+            }
+
+            return validAssemblies.ToArray();
+        }
+#endif
     }
 }
