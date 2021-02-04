@@ -16,7 +16,7 @@ namespace MogglesClient.Messaging.EnvironmentDetector
         private readonly IAssemblyProvider _assemblyProvider;
         private readonly List<string> _assembliesToIgnore = new List<string>{"System", "Microsoft", "Autofac", "mscorlib", "EntityFramework", "Antlr3", "Antlr3.Runtime",
             "Glimpse", "Newtonsoft", "log4net", "AutoMapper", "EPPlus", "Fluent", "Kendo", "MassTransit", "MediatR", "Chutzpah", "WebGrease",
-            "RabbitMQ.Client", "DotNetOpenAuth.Core", "Anonymously", "GreenPipes", "MogglesClient", "NCrontab", "NewId", "NLog", "Polly", "NSMessagingContracts", "NSAlertService", "NSSecurity", "OpsGenieAlerts"};
+            "RabbitMQ.Client", "DotNetOpenAuth.Core", "Anonymously", "GreenPipes", "MogglesClient", "NCrontab", "NewId", "NLog", "Polly", "NSMessagingContracts", "NSAlertService", "NSSecurity", "OpsGenieAlerts", "NUnit.VisualStudio.TestAdapter"};
 
         public FeatureToggleEnvironmentDetector(IMogglesLoggingService featureToggleLoggingService, IMogglesConfigurationManager mogglesConfigurationManager, IMogglesBusService busService, IAssemblyProvider assemblyProvider)
         {
