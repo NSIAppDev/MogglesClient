@@ -16,23 +16,30 @@ namespace MogglesClient.PublicInterface.Notifications
 
         public void TryNotifyMissingFeatureToggle(string featureFlagName)
         {
-            var webHook = _mogglesConfigurationManager.GetNotificationWebHook();
-
-            if (string.IsNullOrEmpty(webHook))
-                return;
-
-            using (var client = new HttpClient {BaseAddress = new Uri(webHook)})
+            try
             {
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                var webHook = _mogglesConfigurationManager.GetNotificationWebHook();
 
-                var application = _mogglesConfigurationManager.GetApplicationName();
-                var environment = _mogglesConfigurationManager.GetEnvironment();
+                if (string.IsNullOrEmpty(webHook))
+                    return;
 
-                var message = new Message($"For Application {application} and Environment {environment} the Feature Toggle with name {featureFlagName} is missing from Moggles.");
+                using (var client = new HttpClient {BaseAddress = new Uri(webHook)})
+                {
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-                var serialized = JsonConvert.SerializeObject(message);
+                    var application = _mogglesConfigurationManager.GetApplicationName();
+                    var environment = _mogglesConfigurationManager.GetEnvironment();
 
-                client.PostAsync(string.Empty, new StringContent(serialized)).GetAwaiter().GetResult();
+                    var message = new Message($"For Application {application} and Environment {environment} the Feature Toggle with name {featureFlagName} is missing from Moggles.");
+
+                    var serialized = JsonConvert.SerializeObject(message);
+
+                    client.PostAsync(string.Empty, new StringContent(serialized)).GetAwaiter().GetResult();
+                }
+            }
+            catch
+            {
+                // ignored
             }
         }
     }
