@@ -2,6 +2,8 @@
 using MogglesClient.Logging;
 using System.Collections.Generic;
 using MogglesClient.Messaging.EnvironmentDetector;
+using MogglesClient.PublicInterface.Notifications;
+
 #if NETCORE
 using Microsoft.Extensions.Configuration;
 #endif
@@ -153,6 +155,9 @@ namespace MogglesClient.PublicInterface
 
             _featureToggleProvider = new MogglesServerProvider(_featureToggleLoggingService, _mogglesConfigurationManager);
             MogglesContainer.Register(_featureToggleProvider);
+
+            var notificationService = new NotificationService(_mogglesConfigurationManager);
+            MogglesContainer.Register<INotificationService>(notificationService);
         }
 
     }

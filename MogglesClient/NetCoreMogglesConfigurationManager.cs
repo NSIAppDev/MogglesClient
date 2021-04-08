@@ -104,6 +104,11 @@ namespace MogglesClient
         {
             return Configuration.GetSection(MogglesConfigurationKeys.RootSection)[MogglesConfigurationKeys.CacheRefreshQueue];
         }
+
+        public string GetNotificationWebHook()
+        {
+            return Configuration.GetSection(MogglesConfigurationKeys.RootSection)[MogglesConfigurationKeys.NotificationWebHook];
+        }
     }
 }
 #endif
