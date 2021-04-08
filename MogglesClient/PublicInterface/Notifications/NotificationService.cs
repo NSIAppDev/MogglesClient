@@ -25,7 +25,10 @@ namespace MogglesClient.PublicInterface.Notifications
             {
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-                var message = new Message($"Feature Toggle with name {featureFlagName} is missing from Moggles.");
+                var application = _mogglesConfigurationManager.GetApplicationName();
+                var environment = _mogglesConfigurationManager.GetEnvironment();
+
+                var message = new Message($"For Application {application} and Environment {environment} the Feature Toggle with name {featureFlagName} is missing from Moggles.");
 
                 var serialized = JsonConvert.SerializeObject(message);
 
