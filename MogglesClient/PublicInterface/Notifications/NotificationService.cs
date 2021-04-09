@@ -8,10 +8,12 @@ namespace MogglesClient.PublicInterface.Notifications
     public class NotificationService : INotificationService
     {
         private readonly IMogglesConfigurationManager _mogglesConfigurationManager;
+        private readonly IMogglesLoggingService _featureToggleLoggingService;
 
-        public NotificationService(IMogglesConfigurationManager mogglesConfigurationManager)
+        public NotificationService(IMogglesConfigurationManager mogglesConfigurationManager, IMogglesLoggingService featureToggleLoggingService)
         {
             _mogglesConfigurationManager = mogglesConfigurationManager;
+            _featureToggleLoggingService = featureToggleLoggingService;
         }
 
         public void TryNotifyMissingFeatureToggle(string featureFlagName)
@@ -37,9 +39,10 @@ namespace MogglesClient.PublicInterface.Notifications
                     client.PostAsync(string.Empty, new StringContent(serialized)).GetAwaiter().GetResult();
                 }
             }
-            catch
+            catch(Exception ex)
             {
-                // ignored
+                _featureToggleLoggingService.TrackException(ex, _mogglesConfigurationManager.GetApplicationName(), _mogglesConfigurationManager.GetEnvironment());
+
             }
         }
     }

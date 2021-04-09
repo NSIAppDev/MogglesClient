@@ -156,7 +156,7 @@ namespace MogglesClient.PublicInterface
             _featureToggleProvider = new MogglesServerProvider(_featureToggleLoggingService, _mogglesConfigurationManager);
             MogglesContainer.Register(_featureToggleProvider);
 
-            var notificationService = new NotificationService(_mogglesConfigurationManager);
+            var notificationService = new NotificationService(_mogglesConfigurationManager, _featureToggleLoggingService);
             MogglesContainer.Register<INotificationService>(notificationService);
         }
 
