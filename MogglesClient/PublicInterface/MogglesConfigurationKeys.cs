@@ -27,6 +27,7 @@
         internal static string InstrumentationKey = $"{RootSection}.ApplicationInsightsInstrumentationKey";
         internal static string CacheRefreshQueue = $"{RootSection}.CacheRefreshQueue";
         internal static string TokenSigningKey = $"{RootSection}.TokenSigningKey";
+        internal static string NotificationWebHook = $"{RootSection}.NotificationWebHook";
 
 #endif
 
@@ -45,6 +46,7 @@
         internal static string InstrumentationKey = "ApplicationInsightsInstrumentationKey";
         internal static string CacheRefreshQueue = "CacheRefreshQueue";
         internal static string TokenSigningKey = "TokenSigningKey";
+        internal static string NotificationWebHook = "NotificationWebHook";
 #endif
     }
 }

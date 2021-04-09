@@ -100,6 +100,11 @@ namespace MogglesClient
         {
             return ConfigurationManager.AppSettings[MogglesConfigurationKeys.CacheRefreshQueue];
         }
+
+        public string GetNotificationWebHook()
+        {
+            return ConfigurationManager.AppSettings[MogglesConfigurationKeys.NotificationWebHook];
+        }
     }
 }
 #endif

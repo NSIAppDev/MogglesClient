@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using MogglesClient.PublicInterface.Notifications;
 
 namespace MogglesClient.PublicInterface
 {
@@ -22,6 +23,7 @@ namespace MogglesClient.PublicInterface
         {
             var featureToggleService = (MogglesToggleService)MogglesContainer.Resolve<MogglesToggleService>();
             var configurationManager = (IMogglesConfigurationManager)MogglesContainer.Resolve<IMogglesConfigurationManager>();
+            var notificationService = (INotificationService)MogglesContainer.Resolve<INotificationService>();
 
             if (configurationManager.IsApplicationInTestingMode())
             {
@@ -31,8 +33,13 @@ namespace MogglesClient.PublicInterface
             var featureToggleValue = featureToggleService.GetFeatureTogglesFromCache()
                 ?.FirstOrDefault(x => x.FeatureToggleName == _name);
 
-            return featureToggleValue?.IsEnabled ?? false;
-        }
+            if (featureToggleValue == null)
+            {
+                notificationService.TryNotifyMissingFeatureToggle(_name);
+                return false;
+            }
 
+            return featureToggleValue.IsEnabled;
+        }
     }
 }
