@@ -4,7 +4,7 @@
     {
         internal static string DefaultTimeoutValue = "30";
         internal static int DefaultCachingTime = 3600;
-        internal static int OnErrorCachingTime = 180;
+        internal static int OnErrorCachingTime = 60;
         internal static string UseMessagingDefault = "false";
 
         internal static string FeatureTogglesCacheKey = "featureToggles";
