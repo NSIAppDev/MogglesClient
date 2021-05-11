@@ -76,4 +76,8 @@
       <_Parameter1>MogglesClientTests</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="PublicInterface\NotificationsCache\" />
+  </ItemGroup>
 </Project>
