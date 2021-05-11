@@ -3,6 +3,7 @@ using MogglesClient.Logging;
 using System.Collections.Generic;
 using MogglesClient.Messaging.EnvironmentDetector;
 using MogglesClient.PublicInterface.Notifications;
+using MogglesClient.PublicInterface.NotificationsCache;
 
 #if NETCORE
 using Microsoft.Extensions.Configuration;
@@ -129,6 +130,10 @@ namespace MogglesClient.PublicInterface
             var cache = new NetFullCache();
             _featureToggleService = new MogglesToggleService(cache, _featureToggleProvider, _featureToggleLoggingService, _mogglesConfigurationManager);
             MogglesContainer.Register(_featureToggleService);
+            
+            var messagesCache = new NetFullNotificationsCache();
+            var notificationService = new NotificationService(messagesCache, _mogglesConfigurationManager, _featureToggleLoggingService);
+            MogglesContainer.Register<INotificationService>(notificationService);
         }
 
 #endif
@@ -145,6 +150,10 @@ namespace MogglesClient.PublicInterface
             var cache = new NetCoreCache();
             _featureToggleService = new MogglesToggleService(cache, _featureToggleProvider, _featureToggleLoggingService, _mogglesConfigurationManager);
             MogglesContainer.Register(_featureToggleService);
+            
+            var messagesCache = new NetCoreNotificationsCache();
+            var notificationService = new NotificationService(messagesCache, _mogglesConfigurationManager, _featureToggleLoggingService);
+            MogglesContainer.Register<INotificationService>(notificationService);
         }
 #endif
 
@@ -155,9 +164,6 @@ namespace MogglesClient.PublicInterface
 
             _featureToggleProvider = new MogglesServerProvider(_featureToggleLoggingService, _mogglesConfigurationManager);
             MogglesContainer.Register(_featureToggleProvider);
-
-            var notificationService = new NotificationService(_mogglesConfigurationManager, _featureToggleLoggingService);
-            MogglesContainer.Register<INotificationService>(notificationService);
         }
 
     }

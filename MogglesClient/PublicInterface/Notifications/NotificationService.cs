@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
+using MogglesClient.PublicInterface.NotificationsCache;
 using Newtonsoft.Json;
 
 namespace MogglesClient.PublicInterface.Notifications
@@ -9,11 +10,13 @@ namespace MogglesClient.PublicInterface.Notifications
     {
         private readonly IMogglesConfigurationManager _mogglesConfigurationManager;
         private readonly IMogglesLoggingService _featureToggleLoggingService;
+        private readonly INotificationsCache _notificationsCache;
 
-        public NotificationService(IMogglesConfigurationManager mogglesConfigurationManager, IMogglesLoggingService featureToggleLoggingService)
+        public NotificationService(INotificationsCache notificationsCache, IMogglesConfigurationManager mogglesConfigurationManager, IMogglesLoggingService featureToggleLoggingService)
         {
             _mogglesConfigurationManager = mogglesConfigurationManager;
             _featureToggleLoggingService = featureToggleLoggingService;
+            _notificationsCache = notificationsCache;
         }
 
         public void TryNotifyMissingFeatureToggle(string featureFlagName)
@@ -25,18 +28,24 @@ namespace MogglesClient.PublicInterface.Notifications
                 if (string.IsNullOrEmpty(webHook))
                     return;
 
+                var application = _mogglesConfigurationManager.GetApplicationName();
+                var environment = _mogglesConfigurationManager.GetEnvironment();
+
+                var message = new Message($"For Application {application} and Environment {environment} the Feature Toggle with name {featureFlagName} is missing from Moggles.");
+
+                if (_notificationsCache.NotificationExists(message))
+                    return;
+
                 using (var client = new HttpClient {BaseAddress = new Uri(webHook)})
                 {
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-                    var application = _mogglesConfigurationManager.GetApplicationName();
-                    var environment = _mogglesConfigurationManager.GetEnvironment();
-
-                    var message = new Message($"For Application {application} and Environment {environment} the Feature Toggle with name {featureFlagName} is missing from Moggles.");
-
                     var serialized = JsonConvert.SerializeObject(message);
 
                     client.PostAsync(string.Empty, new StringContent(serialized)).GetAwaiter().GetResult();
+
+                    var absoluteExpiration = DateTimeOffset.UtcNow.AddHours(MogglesConfigurationKeys.MissingFeatureToggleMessageCachingDurationInHours);
+                    _notificationsCache.CacheNotification(message, absoluteExpiration);
                 }
             }
             catch(Exception ex)

@@ -7,6 +7,8 @@
         internal static int OnErrorCachingTime = 60;
         internal static string UseMessagingDefault = "false";
 
+        internal static int MissingFeatureToggleMessageCachingDurationInHours = 24;
+
         internal static string FeatureTogglesCacheKey = "featureToggles";
         internal static string PreviouslyCachedFeatureTogglesCacheKey = "previouslyCachedFeatureToggles";
 
