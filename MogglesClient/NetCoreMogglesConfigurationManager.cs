@@ -109,6 +109,14 @@ namespace MogglesClient
         {
             return Configuration.GetSection(MogglesConfigurationKeys.RootSection)[MogglesConfigurationKeys.NotificationWebHook];
         }
+
+        public int GetNotificationCachingDuration()
+        {
+            return Configuration.GetSection(MogglesConfigurationKeys.RootSection)[MogglesConfigurationKeys.NotificationCachingDurationInMinutes] != null ?
+                int.Parse(Configuration.GetSection(MogglesConfigurationKeys.RootSection)[MogglesConfigurationKeys.NotificationCachingDurationInMinutes])
+                    :
+                MogglesConfigurationKeys.DefaultCachingTime;
+        }
     }
 }
 #endif

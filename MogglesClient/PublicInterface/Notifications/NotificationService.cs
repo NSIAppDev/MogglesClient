@@ -30,6 +30,7 @@ namespace MogglesClient.PublicInterface.Notifications
 
                 var application = _mogglesConfigurationManager.GetApplicationName();
                 var environment = _mogglesConfigurationManager.GetEnvironment();
+                var notificationCachingDuration = _mogglesConfigurationManager.GetNotificationCachingDuration();
 
                 var message = new Message($"For Application {application} and Environment {environment} the Feature Toggle with name {featureFlagName} is missing from Moggles.");
 
@@ -44,7 +45,7 @@ namespace MogglesClient.PublicInterface.Notifications
 
                     client.PostAsync(string.Empty, new StringContent(serialized)).GetAwaiter().GetResult();
 
-                    var absoluteExpiration = DateTimeOffset.UtcNow.AddMinutes(MogglesConfigurationKeys.MissingFeatureToggleMessageCachingDurationInMinutes);
+                    var absoluteExpiration = DateTimeOffset.UtcNow.AddMinutes(notificationCachingDuration);
                     _notificationsCache.CacheNotification(message, absoluteExpiration);
                 }
             }
