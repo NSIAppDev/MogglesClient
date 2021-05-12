@@ -44,7 +44,7 @@ namespace MogglesClient.PublicInterface.Notifications
 
                     client.PostAsync(string.Empty, new StringContent(serialized)).GetAwaiter().GetResult();
 
-                    var absoluteExpiration = DateTimeOffset.UtcNow.AddHours(MogglesConfigurationKeys.MissingFeatureToggleMessageCachingDurationInHours);
+                    var absoluteExpiration = DateTimeOffset.UtcNow.AddMinutes(MogglesConfigurationKeys.MissingFeatureToggleMessageCachingDurationInMinutes);
                     _notificationsCache.CacheNotification(message, absoluteExpiration);
                 }
             }
