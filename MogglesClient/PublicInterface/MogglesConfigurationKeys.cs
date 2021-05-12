@@ -7,7 +7,7 @@
         internal static int OnErrorCachingTime = 60;
         internal static string UseMessagingDefault = "false";
 
-        internal static int MissingFeatureToggleMessageCachingDurationInMinutes = 20;
+        internal static int DefaultNotificationCachingDurationInMinutes = 20;
 
         internal static string FeatureTogglesCacheKey = "featureToggles";
         internal static string PreviouslyCachedFeatureTogglesCacheKey = "previouslyCachedFeatureToggles";
@@ -30,6 +30,7 @@
         internal static string CacheRefreshQueue = $"{RootSection}.CacheRefreshQueue";
         internal static string TokenSigningKey = $"{RootSection}.TokenSigningKey";
         internal static string NotificationWebHook = $"{RootSection}.NotificationWebHook";
+        internal static string NotificationCachingDurationInMinutes = $"{RootSection}.NotificationCachingDurationInMinutes";
 
 #endif
 
@@ -49,6 +50,8 @@
         internal static string CacheRefreshQueue = "CacheRefreshQueue";
         internal static string TokenSigningKey = "TokenSigningKey";
         internal static string NotificationWebHook = "NotificationWebHook";
+        internal static string NotificationCachingDurationInMinutes = "NotificationCachingDurationInMinutes";
+
 #endif
     }
 }

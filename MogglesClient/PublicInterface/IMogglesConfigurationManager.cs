@@ -21,5 +21,6 @@ namespace MogglesClient.PublicInterface
         string GetInstrumentationKey();
         string GetCacheRefreshQueue();
         string GetNotificationWebHook();
+        int GetNotificationCachingDuration();
     }
 }
