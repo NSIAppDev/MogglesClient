@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net452;net462;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net452;net462;net472;netstandard2.0</TargetFrameworks>
     <!-- Nuget Attributes -->
     <PackageId>MogglesClient</PackageId>
     <Authors>Moggles Build System</Authors>
@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <!-- .NET 4.6.2 references, compilation flags and build options -->
-  <ItemGroup Condition="'$(TargetFramework)'=='net462'">
+  <ItemGroup Condition="'$(TargetFramework)'=='net462' OR '$(TargetFramework)'=='net472'">
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -67,7 +67,7 @@
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <DefineConstants>NETCORE</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net452' OR '$(TargetFramework)'=='net462'">
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net452' OR '$(TargetFramework)'=='net462' OR '$(TargetFramework)'=='net472'">
     <DefineConstants>NETFULL</DefineConstants>
   </PropertyGroup>
 
