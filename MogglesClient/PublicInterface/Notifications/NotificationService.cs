@@ -21,23 +21,30 @@ namespace MogglesClient.PublicInterface.Notifications
 
         public void TryNotifyMissingFeatureToggle(string featureFlagName)
         {
+            var message = new Message($"For Application {_mogglesConfigurationManager.GetApplicationName()} and Environment {_mogglesConfigurationManager.GetEnvironment()} the Feature Toggle with name {featureFlagName} is missing from Moggles.");
+            
+            SendNotification(message);
+        }
+
+        public void TryNotifyBadAuthentication(string errorMessage)
+        {
+            var message = new Message($"Application {_mogglesConfigurationManager.GetApplicationName()} and Environment {_mogglesConfigurationManager.GetEnvironment()} failed to read feature flags. Error message: {errorMessage}.");
+
+            SendNotification(message);
+        }
+
+        private void SendNotification(Message message)
+        {
             try
             {
                 var webHook = _mogglesConfigurationManager.GetNotificationWebHook();
-
                 if (string.IsNullOrEmpty(webHook))
                     return;
-
-                var application = _mogglesConfigurationManager.GetApplicationName();
-                var environment = _mogglesConfigurationManager.GetEnvironment();
-                var notificationCachingDuration = _mogglesConfigurationManager.GetNotificationCachingDuration();
-
-                var message = new Message($"For Application {application} and Environment {environment} the Feature Toggle with name {featureFlagName} is missing from Moggles.");
 
                 if (_notificationsCache.NotificationExists(message))
                     return;
 
-                using (var client = new HttpClient {BaseAddress = new Uri(webHook)})
+                using (var client = new HttpClient { BaseAddress = new Uri(webHook) })
                 {
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
@@ -45,14 +52,13 @@ namespace MogglesClient.PublicInterface.Notifications
 
                     client.PostAsync(string.Empty, new StringContent(serialized)).GetAwaiter().GetResult();
 
-                    var absoluteExpiration = DateTimeOffset.UtcNow.AddMinutes(notificationCachingDuration);
+                    var absoluteExpiration = DateTimeOffset.UtcNow.AddMinutes(_mogglesConfigurationManager.GetNotificationCachingDuration());
                     _notificationsCache.CacheNotification(message, absoluteExpiration);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _featureToggleLoggingService.TrackException(ex, _mogglesConfigurationManager.GetApplicationName(), _mogglesConfigurationManager.GetEnvironment());
-
             }
         }
     }

@@ -19,6 +19,7 @@ namespace MogglesClient.PublicInterface
         private IMogglesFeatureToggleProvider _featureToggleProvider;
         private IMogglesConfigurationManager _mogglesConfigurationManager;
         private IMogglesBusService _busService;
+        private INotificationService _notificationService;
 
         private static readonly object Padlock = new object();
 
@@ -27,14 +28,14 @@ namespace MogglesClient.PublicInterface
         {
             lock (Padlock)
             {
-                var instance = (Moggles)MogglesContainer.Resolve<Moggles>();
-                if (instance == null)
-                {
-                    instance = new Moggles(configurationManager, loggingService);
-                    MogglesContainer.Register(instance);
-                }
+                    var instance = (Moggles)MogglesContainer.Resolve<Moggles>();
+                    if (instance == null)
+                    {
+                        instance = new Moggles(configurationManager, loggingService);
+                        MogglesContainer.Register(instance);
+                    }
 
-                return instance;
+                    return instance;
             }
         }
 
@@ -50,14 +51,14 @@ namespace MogglesClient.PublicInterface
         {
             lock (Padlock)
             {
-                var instance = (Moggles)MogglesContainer.Resolve<Moggles>();
-                if (instance == null)
-                {
-                    instance = new Moggles(configuration, loggingService);
-                    MogglesContainer.Register(instance);
-                }
+                    var instance = (Moggles)MogglesContainer.Resolve<Moggles>();
+                    if (instance == null)
+                    {
+                        instance = new Moggles(configuration, loggingService);
+                        MogglesContainer.Register(instance);
+                    }
 
-                return instance;
+                    return instance;
             }
         }
 
@@ -125,15 +126,15 @@ namespace MogglesClient.PublicInterface
             _mogglesConfigurationManager = configurationManager ?? new NetFullMogglesConfigurationManager();
             MogglesContainer.Register(_mogglesConfigurationManager);
 
-            ConfigureCommonComponents(loggingService);
+            var messagesCache = new NetFullNotificationsCache();
+            _notificationService = new NotificationService(messagesCache, _mogglesConfigurationManager, _featureToggleLoggingService);
+            MogglesContainer.Register<INotificationService>(_notificationService);
+
+            ConfigureCommonComponents(loggingService, _notificationService);
 
             var cache = new NetFullCache();
             _featureToggleService = new MogglesToggleService(cache, _featureToggleProvider, _featureToggleLoggingService, _mogglesConfigurationManager);
             MogglesContainer.Register(_featureToggleService);
-            
-            var messagesCache = new NetFullNotificationsCache();
-            var notificationService = new NotificationService(messagesCache, _mogglesConfigurationManager, _featureToggleLoggingService);
-            MogglesContainer.Register<INotificationService>(notificationService);
         }
 
 #endif
@@ -145,24 +146,24 @@ namespace MogglesClient.PublicInterface
             _mogglesConfigurationManager = new NetCoreMogglesConfigurationManager(configuration);
             MogglesContainer.Register(_mogglesConfigurationManager);
 
-            ConfigureCommonComponents(loggingService);
+             var messagesCache = new NetCoreNotificationsCache();
+            _notificationService = new NotificationService(messagesCache, _mogglesConfigurationManager, _featureToggleLoggingService);
+            MogglesContainer.Register<INotificationService>(_notificationService);
+
+            ConfigureCommonComponents(loggingService, _notificationService);
 
             var cache = new NetCoreCache();
             _featureToggleService = new MogglesToggleService(cache, _featureToggleProvider, _featureToggleLoggingService, _mogglesConfigurationManager);
             MogglesContainer.Register(_featureToggleService);
-            
-            var messagesCache = new NetCoreNotificationsCache();
-            var notificationService = new NotificationService(messagesCache, _mogglesConfigurationManager, _featureToggleLoggingService);
-            MogglesContainer.Register<INotificationService>(notificationService);
         }
 #endif
 
-        private void ConfigureCommonComponents(IMogglesLoggingService loggingService)
+        private void ConfigureCommonComponents(IMogglesLoggingService loggingService, INotificationService notificationService)
         {
             _featureToggleLoggingService = loggingService ?? new TelemetryClientService(_mogglesConfigurationManager);
             MogglesContainer.Register(_featureToggleLoggingService);
 
-            _featureToggleProvider = new MogglesServerProvider(_featureToggleLoggingService, _mogglesConfigurationManager);
+            _featureToggleProvider = new MogglesServerProvider(_featureToggleLoggingService, _mogglesConfigurationManager, notificationService);
             MogglesContainer.Register(_featureToggleProvider);
         }
 
