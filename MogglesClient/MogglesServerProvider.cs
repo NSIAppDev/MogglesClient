@@ -7,6 +7,7 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using MogglesClient.PublicInterface;
+using MogglesClient.PublicInterface.Notifications;
 
 namespace MogglesClient
 {
@@ -14,11 +15,13 @@ namespace MogglesClient
     {
         private readonly IMogglesLoggingService _featureToggleLoggingService;
         private readonly IMogglesConfigurationManager _mogglesConfigurationManager;
+        private readonly INotificationService _notificationService;
 
-        public MogglesServerProvider(IMogglesLoggingService featureToggleLoggingService, IMogglesConfigurationManager mogglesConfigurationManager)
+        public MogglesServerProvider(IMogglesLoggingService featureToggleLoggingService, IMogglesConfigurationManager mogglesConfigurationManager, INotificationService notificationService)
         {
             _featureToggleLoggingService = featureToggleLoggingService;
             _mogglesConfigurationManager = mogglesConfigurationManager;
+            _notificationService = notificationService; 
         }
 
         public List<FeatureToggle> GetFeatureToggles()
@@ -41,6 +44,7 @@ namespace MogglesClient
                 }
                 catch (AggregateException ex)
                 {
+                    _notificationService.TryNotifyBadAuthentication("An error occurred while getting the feature toggles from the server!");
                     _featureToggleLoggingService.TrackException(ex, _mogglesConfigurationManager.GetApplicationName(), _mogglesConfigurationManager.GetEnvironment());
                     throw new MogglesClientException("An error occurred while getting the feature toggles from the server!");
                 }
@@ -72,8 +76,11 @@ namespace MogglesClient
                 new MediaTypeWithQualityHeaderValue("application/json"));
 
             if (string.IsNullOrEmpty(TokenSigningKey))
+            {
+                _notificationService.TryNotifyBadAuthentication("Missing TokenSigningKey from configuration.");
                 return;
-
+            }
+               
             client.DefaultRequestHeaders.Authorization = GetSecurityToken();
         }
 
@@ -83,13 +90,21 @@ namespace MogglesClient
 
         private string GenerateJwtToken()
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = TokenSigningKey;
-            var credentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)), SecurityAlgorithms.HmacSha256Signature);
+            try
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = TokenSigningKey;
+                var credentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)), SecurityAlgorithms.HmacSha256Signature);
 
-            var securityToken = new JwtSecurityToken(null, null, null, null, DateTime.Now.AddMinutes(1.0), credentials);
+                var securityToken = new JwtSecurityToken(null, null, null, null, DateTime.Now.AddMinutes(1.0), credentials);
 
-            return tokenHandler.WriteToken(securityToken);
+                return tokenHandler.WriteToken(securityToken);
+            }
+            catch(Exception ex)
+            {
+                _notificationService.TryNotifyBadAuthentication(ex.Message);
+                return null;
+            }
         }
     }
 }
