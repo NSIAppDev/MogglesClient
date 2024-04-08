@@ -51,6 +51,7 @@ namespace MogglesClient
 
                 if (!response.IsSuccessStatusCode)
                 {
+                    _notificationService.TryNotifyBadAuthentication("An error occurred while getting the feature toggles from the server");
                     _featureToggleLoggingService.TrackException(new MogglesClientException("An error occurred while getting the feature toggles from the server!"), _mogglesConfigurationManager.GetApplicationName(), _mogglesConfigurationManager.GetEnvironment());
                     throw new MogglesClientException(
                         "An error occurred while getting the feature toggles from the server!");
@@ -81,7 +82,7 @@ namespace MogglesClient
             client.DefaultRequestHeaders.Authorization = GetSecurityToken();
         }
 
-        private string TokenSigningKey => _mogglesConfigurationManager.GetTokenSigningKey();
+        private string TokenSigningKey => null; // _mogglesConfigurationManager.GetTokenSigningKey();
 
         private AuthenticationHeaderValue GetSecurityToken() => new AuthenticationHeaderValue("Bearer", GenerateJwtToken());
 
