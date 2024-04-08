@@ -82,7 +82,7 @@ namespace MogglesClient
             client.DefaultRequestHeaders.Authorization = GetSecurityToken();
         }
 
-        private string TokenSigningKey => null; // _mogglesConfigurationManager.GetTokenSigningKey();
+        private string TokenSigningKey => _mogglesConfigurationManager.GetTokenSigningKey();
 
         private AuthenticationHeaderValue GetSecurityToken() => new AuthenticationHeaderValue("Bearer", GenerateJwtToken());
 
