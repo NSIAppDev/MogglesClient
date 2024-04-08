@@ -76,10 +76,7 @@ namespace MogglesClient
                 new MediaTypeWithQualityHeaderValue("application/json"));
 
             if (string.IsNullOrEmpty(TokenSigningKey))
-            {
-                _notificationService.TryNotifyBadAuthentication("Missing TokenSigningKey from configuration.");
                 return;
-            }
                
             client.DefaultRequestHeaders.Authorization = GetSecurityToken();
         }
