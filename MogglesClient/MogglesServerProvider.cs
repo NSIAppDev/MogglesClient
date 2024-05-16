@@ -44,17 +44,17 @@ namespace MogglesClient
                 }
                 catch (AggregateException ex)
                 {
-                    _notificationService.TryNotifyBadAuthentication("An error occurred while getting the feature toggles from the server!");
+                    _notificationService.TryNotifyBadAuthentication("An error occurred while getting the feature toggles from the server! " + ex.Message);
                     _featureToggleLoggingService.TrackException(ex, _mogglesConfigurationManager.GetApplicationName(), _mogglesConfigurationManager.GetEnvironment());
-                    throw new MogglesClientException("An error occurred while getting the feature toggles from the server!");
+                    throw new MogglesClientException("An error occurred while getting the feature toggles from the server! " + ex.Message);
                 }
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    _notificationService.TryNotifyBadAuthentication("An error occurred while getting the feature toggles from the server");
-                    _featureToggleLoggingService.TrackException(new MogglesClientException("An error occurred while getting the feature toggles from the server!"), _mogglesConfigurationManager.GetApplicationName(), _mogglesConfigurationManager.GetEnvironment());
+                    _notificationService.TryNotifyBadAuthentication("An error occurred while getting the feature toggles from the server. " + response.Content.ReadAsStringAsync().Result);
+                    _featureToggleLoggingService.TrackException(new MogglesClientException("An error occurred while getting the feature toggles from the server! " + response.Content.ReadAsStringAsync().Result), _mogglesConfigurationManager.GetApplicationName(), _mogglesConfigurationManager.GetEnvironment());
                     throw new MogglesClientException(
-                        "An error occurred while getting the feature toggles from the server!");
+                        "An error occurred while getting the feature toggles from the server! " + response.Content.ReadAsStringAsync().Result);
                 }
 
                 return JsonConvert.DeserializeObject<List<FeatureToggle>>(featureToggles);
