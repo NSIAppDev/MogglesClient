@@ -51,10 +51,10 @@ namespace MogglesClient
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    _notificationService.TryNotifyBadAuthentication("An error occurred while getting the feature toggles from the server. " + response.Content.ReadAsStringAsync().Result);
-                    _featureToggleLoggingService.TrackException(new MogglesClientException("An error occurred while getting the feature toggles from the server! " + response.Content.ReadAsStringAsync().Result), _mogglesConfigurationManager.GetApplicationName(), _mogglesConfigurationManager.GetEnvironment());
+                    _notificationService.TryNotifyBadAuthentication("An error occurred while getting the feature toggles from the server. Status code: " + response.StatusCode + " " + response.ReasonPhrase);
+                    _featureToggleLoggingService.TrackException(new MogglesClientException("An error occurred while getting the feature toggles from the server! Status code: " + response.StatusCode + " " + response.ReasonPhrase), _mogglesConfigurationManager.GetApplicationName(), _mogglesConfigurationManager.GetEnvironment());
                     throw new MogglesClientException(
-                        "An error occurred while getting the feature toggles from the server! " + response.Content.ReadAsStringAsync().Result);
+                        "An error occurred while getting the feature toggles from the server! Status code: " + response.StatusCode + " " + response.ReasonPhrase);
                 }
 
                 return JsonConvert.DeserializeObject<List<FeatureToggle>>(featureToggles);
