@@ -74,7 +74,7 @@ namespace MogglesClientTests
         {
             //Arrange
             var featureToggles = CreateFeatureToggles();
-            _featureToggleProvider.Setup(x => x.GetFeatureToggles()).Returns(featureToggles);
+            _featureToggleProvider.Setup(x => x.GetFeatureToggles()).ReturnsAsync(featureToggles);
 
             //Act
             _mogglesToggleService.CacheFeatureToggles();
