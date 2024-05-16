@@ -8,7 +8,6 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using MogglesClient.PublicInterface;
 using MogglesClient.PublicInterface.Notifications;
-using System.Threading.Tasks;
 
 namespace MogglesClient
 {
@@ -25,7 +24,7 @@ namespace MogglesClient
             _notificationService = notificationService; 
         }
 
-        public async Task<List<FeatureToggle>> GetFeatureToggles()
+        public List<FeatureToggle> GetFeatureToggles()
         {
             using (var client = new HttpClient())
             {
@@ -36,14 +35,14 @@ namespace MogglesClient
                 string urlWithParams = GetUrlParams();
 
                 HttpResponseMessage response;
-                string responseContent;
+                string featureToggles;
 
                 try
                 {
-                    response = await client.GetAsync(urlWithParams);
-                    responseContent = await response.Content.ReadAsStringAsync();
+                    response = client.GetAsync(urlWithParams).Result;
+                    featureToggles = response.Content.ReadAsStringAsync().Result;
                 }
-                catch (AggregateException ex)   
+                catch (AggregateException ex)
                 {
                     _notificationService.TryNotifyBadAuthentication("An error occurred while getting the feature toggles from the server! " + ex.Message);
                     _featureToggleLoggingService.TrackException(ex, _mogglesConfigurationManager.GetApplicationName(), _mogglesConfigurationManager.GetEnvironment());
@@ -52,13 +51,13 @@ namespace MogglesClient
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    _notificationService.TryNotifyBadAuthentication("An error occurred while getting the feature toggles from the server. " + responseContent);
-                    _featureToggleLoggingService.TrackException(new MogglesClientException("An error occurred while getting the feature toggles from the server! " + responseContent), _mogglesConfigurationManager.GetApplicationName(), _mogglesConfigurationManager.GetEnvironment());
+                    _notificationService.TryNotifyBadAuthentication("An error occurred while getting the feature toggles from the server. " + response.Content.ReadAsStringAsync().Result);
+                    _featureToggleLoggingService.TrackException(new MogglesClientException("An error occurred while getting the feature toggles from the server! " + response.Content.ReadAsStringAsync().Result), _mogglesConfigurationManager.GetApplicationName(), _mogglesConfigurationManager.GetEnvironment());
                     throw new MogglesClientException(
-                        "An error occurred while getting the feature toggles from the server! " + responseContent);
+                        "An error occurred while getting the feature toggles from the server! " + response.Content.ReadAsStringAsync().Result);
                 }
 
-                return JsonConvert.DeserializeObject<List<FeatureToggle>>(responseContent);
+                return JsonConvert.DeserializeObject<List<FeatureToggle>>(featureToggles);
             }
         }
 
