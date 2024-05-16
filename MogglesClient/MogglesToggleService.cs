@@ -40,11 +40,11 @@ namespace MogglesClient
             return new List<FeatureToggle>();
         }
 
-        public void CacheFeatureToggles()
+        public async void CacheFeatureToggles()
         {
             try
             {
-                var featureToggles = _featureToggleProvider.GetFeatureToggles();
+                var featureToggles = await _featureToggleProvider.GetFeatureToggles();
 
                 _cache.CacheFeatureToggles(MogglesConfigurationKeys.FeatureTogglesCacheKey, featureToggles, _mogglesConfigurationManager.GetCachingTime());
                 _cache.CacheFeatureToggles(MogglesConfigurationKeys.PreviouslyCachedFeatureTogglesCacheKey, featureToggles, isExpiringCacheEntry: false);
