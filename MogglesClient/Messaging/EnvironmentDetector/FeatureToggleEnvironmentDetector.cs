@@ -1,14 +1,14 @@
-﻿using System;
+﻿using MogglesClient.PublicInterface;
+using MogglesContracts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using MogglesClient.PublicInterface;
-using MogglesContracts;
 
 namespace MogglesClient.Messaging.EnvironmentDetector
 {
-    public class FeatureToggleEnvironmentDetector: IFeatureToggleEnvironmentDetector
+    public class FeatureToggleEnvironmentDetector : IFeatureToggleEnvironmentDetector
     {
         private readonly IMogglesLoggingService _featureToggleLoggingService;
         private readonly IMogglesConfigurationManager _mogglesConfigurationManager;
@@ -87,21 +87,7 @@ namespace MogglesClient.Messaging.EnvironmentDetector
 
             return featureToggleNames.ToArray();
         }
-#if NETCORE
-        private Assembly[] GetValidAssemblies()
-        {
-            var assembliesNames = Assembly.GetEntryAssembly()?.GetReferencedAssemblies();
 
-            var validAssemblies = assembliesNames?.Where(assembly => !_assembliesToIgnore.Any(assembly.FullName.Contains)).ToList();
-            validAssemblies?.Add(Assembly.GetEntryAssembly()?.GetName());
-
-            var assemblies = validAssemblies?.Select(Assembly.Load).Where(a => !a.GlobalAssemblyCache);
-
-            return assemblies?.ToArray();
-        }
-#endif
-
-#if NETFULL
         private Assembly[] GetValidAssemblies()
         {
             var assemblies = _assemblyProvider.GetCurrentDomainAssemblies();
@@ -127,6 +113,5 @@ namespace MogglesClient.Messaging.EnvironmentDetector
 
             return validAssemblies.ToArray();
         }
-#endif
     }
 }

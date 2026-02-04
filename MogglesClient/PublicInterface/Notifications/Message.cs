@@ -1,12 +1,13 @@
-﻿namespace MogglesClient.PublicInterface.Notifications
+﻿using Newtonsoft.Json;
+
+namespace MogglesClient.PublicInterface.Notifications
 {
     public class Message
     {
-        public string text { get; }
+        [JsonProperty("title")]
+        public string Title { get; set; }
 
-        public Message(string text)
-        {
-            this.text = text;
-        }
+        [JsonProperty("text")]
+        public string Text { get; set; }
     }
 }

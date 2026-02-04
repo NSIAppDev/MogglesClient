@@ -15,21 +15,11 @@ namespace MogglesClient.PublicInterface.NotificationsCache
         }
 
         public void CacheNotification(Message message, DateTimeOffset absoluteExpiration)
-        {   
-            Cache.Add(message.text, message, absoluteExpiration);
-        }
-
-        public bool NotificationExists(Message message)
-        {
-            return Cache.Contains(message.text);
-        }
-
-        public void CacheNotification(WorkflowMessage message, DateTimeOffset absoluteExpiration)
         {
             Cache.Add(message.Title, message, absoluteExpiration);
         }
 
-        public bool NotificationExists(WorkflowMessage message)
+        public bool NotificationExists(Message message)
         {
             return Cache.Contains(message.Title);
         }
