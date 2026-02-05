@@ -1,11 +1,11 @@
 ﻿#if NETCORE
+using Microsoft.Extensions.Caching.Memory;
 using MogglesClient.PublicInterface.Notifications;
 using System;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace MogglesClient.PublicInterface.NotificationsCache
 {
-    public class NetCoreNotificationsCache: INotificationsCache
+    public class NetCoreNotificationsCache : INotificationsCache
     {
         private MemoryCache Cache { get; set; }
 
@@ -16,20 +16,10 @@ namespace MogglesClient.PublicInterface.NotificationsCache
 
         public void CacheNotification(Message message, DateTimeOffset absoluteExpiration)
         {
-            Cache.Set(message.text, message, absoluteExpiration);
-        }
-
-        public bool NotificationExists(Message message)
-        {
-            return Cache.Get(message.text) != null;
-        }
-
-        public void CacheNotification(WorkflowMessage message, DateTimeOffset absoluteExpiration)
-        {
             Cache.Set(message.Title, message, absoluteExpiration);
         }
 
-        public bool NotificationExists(WorkflowMessage message)
+        public bool NotificationExists(Message message)
         {
             return Cache.Get(message.Title) != null;
         }

@@ -8,9 +8,5 @@ namespace MogglesClient.PublicInterface.NotificationsCache
         bool NotificationExists(Message message);
 
         void CacheNotification(Message message, DateTimeOffset absoluteExpiration);
-
-        bool NotificationExists(WorkflowMessage message);
-
-        void CacheNotification(WorkflowMessage message, DateTimeOffset absoluteExpiration);
     }
 }
