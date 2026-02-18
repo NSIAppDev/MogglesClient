@@ -1,9 +1,11 @@
-﻿namespace MogglesClient.PublicInterface.Notifications
+﻿using System.Threading.Tasks;
+
+namespace MogglesClient.PublicInterface.Notifications
 {
     public interface INotificationService
     {
-        void TryNotifyMissingFeatureToggle(string featureFlagName);
+        Task TryNotifyMissingFeatureToggle(string featureFlagName);
 
-        void TryNotifyBadAuthentication(string errorMessage);
+        Task TryNotifyBadAuthentication(string errorMessage);
     }
 }
