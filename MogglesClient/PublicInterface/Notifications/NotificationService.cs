@@ -4,6 +4,7 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace MogglesClient.PublicInterface.Notifications
 {
@@ -20,7 +21,7 @@ namespace MogglesClient.PublicInterface.Notifications
             _notificationsCache = notificationsCache;
         }
 
-        public void TryNotifyMissingFeatureToggle(string featureFlagName)
+        public Task TryNotifyMissingFeatureToggle(string featureFlagName)
         {
             var message = new Message
             {
@@ -28,10 +29,10 @@ namespace MogglesClient.PublicInterface.Notifications
                 Text = string.Empty
             };
 
-            SendNotification(message);
+            return SendNotification(message);
         }
 
-        public void TryNotifyBadAuthentication(string errorMessage)
+        public Task TryNotifyBadAuthentication(string errorMessage)
         {
             var message = new Message
             {
@@ -39,11 +40,11 @@ namespace MogglesClient.PublicInterface.Notifications
                 Text = string.Empty
             };
 
-            SendNotification(message);
+            return SendNotification(message);
         }
 
 
-        private void SendNotification(Message message)
+        private async Task SendNotification(Message message)
         {
             try
             {
@@ -61,7 +62,7 @@ namespace MogglesClient.PublicInterface.Notifications
                     var serialized = JsonConvert.SerializeObject(message);
                     var content = new StringContent(serialized, Encoding.UTF8, "application/json");
 
-                    client.PostAsync(string.Empty, content);
+                    await client.PostAsync(string.Empty, content);
 
                     var absoluteExpiration = DateTimeOffset.UtcNow.AddMinutes(_mogglesConfigurationManager.GetNotificationCachingDuration());
                     _notificationsCache.CacheNotification(message, absoluteExpiration);
